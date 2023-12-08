@@ -14,10 +14,17 @@
     <script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
     <script type="text/javascript" src="cropxtender.js"></script>
     <script>
-        $('document').ready(function(){
+        $('document').ready(function(){            
+            const save = () => {
+                console.log("test");
+            }
+
             $("#cropxtender-input").cropxtender({
                 maxSize: { width: null, height: null },
                 minSize: { width: null, height: null },
+                saveButtonText: "Oui",
+                closeButtonText: "Non",
+                // saveFunction: save,
             });
         });
     </script>

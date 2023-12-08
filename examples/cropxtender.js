@@ -1,8 +1,22 @@
 $.fn.cropxtender = function(options) {
     return this.each(function() {
         const fileInput = $(this);
+        let getCanvas;
+        console.log(options);
+
+        const dataURLtoBlob = (dataUrl) => {
+            const arr = dataUrl.split(',');
+            const mime = arr[0].match(/:(.*?);/)[1];
+            const bstr = atob(arr[1]);
+            let n = bstr.length;
+            const u8arr = new Uint8Array(n);
+            while (n--) {
+                u8arr[n] = bstr.charCodeAt(n);
+            }
+            return new Blob([u8arr], { type: mime });
+        }
+
         fileInput.change(function() {
-            console.log(options);
             if (fileInput[0].files[0].type === "image/jpeg" || fileInput[0].files[0].type === "image/png") {
                 const image = fileInput[0].files[0];
 
@@ -24,16 +38,23 @@ $.fn.cropxtender = function(options) {
                     </div>
                 `);
 
+                if (options && options.saveButtonText && typeof options.saveButtonText === "string") {
+                    $("#cxt-save").text(options.saveButtonText);
+                }
+                if (options && options.closeButtonText && typeof options.closeButtonText === "string") {
+                    $("#cxt-close").text(options.closeButtonText);
+                }
+
                 const rules = `
                 #cropxtender {
                     display           : flex;
                     flex-direction    : column;
                     width             : 100%;
-                    height: 100vh;
-                    position: absolute;
-                    z-index: 98;
-                    top: 0;
-                    left: 0;
+                    height            : 100vh;
+                    position          : absolute;
+                    z-index           : 98;
+                    top               : 0;
+                    left              : 0;
                 }
                 #cxt-backdrop {
                     width             : 100%;
@@ -61,7 +82,7 @@ $.fn.cropxtender = function(options) {
                 }
                 #cxt-preview {
                     width : 450px;
-                    height: 450px;
+                    max-height: 450px;
                 }
                 #cxt-preview canvas {
                     width: 100% !important;
@@ -77,8 +98,8 @@ $.fn.cropxtender = function(options) {
                 #cxt-builder {
                     position: absolute;
                     top: 100vh;
-                    width     : 1000px;
-                    height    : 1000px;
+                    width: 1000px;
+                    height: 1000px;
                     background: #f0f0f0;
                 }
                 #cxt-bg {
@@ -93,7 +114,7 @@ $.fn.cropxtender = function(options) {
                 }
                 #cxt-img {
                     position: absolute;
-                    height: 100%;
+                    max-height: 100%;
                     object-fit: fill;
                 }
                 `;
@@ -116,11 +137,19 @@ $.fn.cropxtender = function(options) {
 
                 $("#cropxtender").css("overflow", "visible");
 
+
                 setTimeout(() => {
                     const element = $("#cxt-builder");
+                    $("#cxt-bg").width($("#cxt-img").width());
+                    $("#cxt-bg").height($("#cxt-img").height());
+                    
+                    $("#cxt-builder").width($("#cxt-img").width());
+                    $("#cxt-builder").height($("#cxt-img").height());
+
                     html2canvas(element.get(0)).then(function(canvas) {
                         $("#cxt-preview").html(canvas);
-                    });    
+                        getCanvas = canvas;
+                    });
                 }, 500);
 
                 $("#cropxtender").css("overflow", "hidden");
@@ -128,11 +157,28 @@ $.fn.cropxtender = function(options) {
                 $("#cxt-backdrop").click(function() {
                     $("#cropxtender").remove();
                     fileInput.val("");
-                })
-                $("#cxt-close").click(function() { 
+                });
+
+                $("#cxt-close").click(function() {
                     $("#cropxtender").remove();
                     fileInput.val("");
                 });
+
+                if (options && options.saveFunction && typeof options.saveFunction === 'function') {
+                    $("#cxt-save").click(function() {
+                        options.saveFunction.call();
+                    });
+                } else {
+                    $("#cxt-save").click(function() {
+                        const dataTransfer = new DataTransfer();
+                        const dataUrl = getCanvas.toDataURL("image/png");
+                        const blob = dataURLtoBlob(dataUrl);
+                        const file = new File([blob], 'image.png', { type: 'image/png' });
+                        dataTransfer.items.add(file);
+                        fileInput[0].files = dataTransfer.files;
+                        $("#cropxtender").remove();
+                    });
+                }
             }
         });
     });
