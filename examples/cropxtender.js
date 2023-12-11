@@ -16,6 +16,15 @@ $.fn.cropxtender = function(options) {
             return new Blob([u8arr], { type: mime });
         }
 
+        const objectToCssString = (styles) => {
+            let cssString = "{ ";
+            $.each(styles, function(property, value) {
+                cssString += `${property}: ${value}; `;
+            });
+            cssString += "}";
+            return cssString;
+        }
+
         fileInput.change(function() {
             if (fileInput[0].files[0].type === "image/jpeg" || fileInput[0].files[0].type === "image/png") {
                 const image = fileInput[0].files[0];
@@ -45,7 +54,7 @@ $.fn.cropxtender = function(options) {
                     $("#cxt-close").text(options.closeButtonText);
                 }
 
-                const rules = `
+                let rules = `
                 #cropxtender {
                     display           : flex;
                     flex-direction    : column;
@@ -81,7 +90,7 @@ $.fn.cropxtender = function(options) {
                     padding: 1rem;
                 }
                 #cxt-preview {
-                    width : 450px;
+                    width : 100%;
                     max-height: 450px;
                 }
                 #cxt-preview canvas {
@@ -118,6 +127,21 @@ $.fn.cropxtender = function(options) {
                     object-fit: fill;
                 }
                 `;
+
+                if (options.saveButtonStyle) {
+                    const css = objectToCssString(options.saveButtonStyle);
+                    rules += "#cxt-save " + css;
+                }
+
+                if (options.closeButtonStyle) {
+                    const css = objectToCssString(options.closeButtonStyle);
+                    rules += "#cxt-close " + css;
+                }
+
+                if (options.modalStyle) {
+                    const css = objectToCssString(options.modalStyle);
+                    rules += "#cxt-modal " + css;
+                }
 
                 if ($("style").length > 0) {
                     if (!$("style").text().includes(rules)) {
@@ -158,7 +182,7 @@ $.fn.cropxtender = function(options) {
                     $("#cropxtender").remove();
                     fileInput.val("");
                 });
-
+ 
                 $("#cxt-close").click(function() {
                     $("#cropxtender").remove();
                     fileInput.val("");
