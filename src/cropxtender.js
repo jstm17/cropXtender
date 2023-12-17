@@ -33,7 +33,9 @@ $.fn.cropxtender = function(options) {
                     <div id="cropxtender">
                         <div id="cxt-backdrop"></div>
                         <div id="cxt-modal">
-                            <div id="cxt-preview"></div>
+                            <div id="cxt-preview">
+                                <div id="cxt-preview-elm"></div>
+                            </div>
                             <div id="cxt-actions">
                                 <button id="cxt-close">Annuler</button>
                                 <button id="cxt-save">Valider</button>
@@ -41,10 +43,16 @@ $.fn.cropxtender = function(options) {
                         </div>
                         <div id="cxt-builder">
                             <div id="cxt-bg">
+                                <div id="cxt-elm"></div>
                                 <img id="cxt-img" src="">
                             </div>
                         </div>
                     </div>
+                    <script src="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js" integrity="sha512-uto9mlQzrs59VwILcLiRYeLKPPbS/bT71da/OEBYEwcdNUk8jYIy+D176RYoop1Da+f9mvkYrmj5MCLZWEtQuA==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+                    <script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
+                `);
+                $("head").append(`
+                <link rel="stylesheet" type="text/css" href="http://code.jquery.com/ui/1.9.2/themes/base/jquery-ui.css"/>
                 `);
 
                 if (options && options.saveButtonText && typeof options.saveButtonText === "string") {
@@ -92,6 +100,22 @@ $.fn.cropxtender = function(options) {
                 #cxt-preview {
                     width : 100%;
                     max-height: 450px;
+                    overflow-y: scroll;
+                    overflow-x: hidden;
+                    position: relative;
+                }
+                #cxt-preview-elm {
+                    width: 100%;
+                    height: 100%;
+                    position: absolute;
+                    border: 2px #adf dashed;
+                    box-shadow: 0px 0px 0px 500px rgba(0, 0, 0, 0.5);
+                }
+                #cxt-elm {
+                    width: 100%;
+                    height: 100%;
+                    z-index: 2;
+                    position: absolute;
                 }
                 #cxt-preview canvas {
                     width: 100% !important;
@@ -161,7 +185,6 @@ $.fn.cropxtender = function(options) {
 
                 $("#cropxtender").css("overflow", "visible");
 
-
                 setTimeout(() => {
                     const element = $("#cxt-builder");
                     $("#cxt-bg").width($("#cxt-img").width());
@@ -171,9 +194,33 @@ $.fn.cropxtender = function(options) {
                     $("#cxt-builder").height($("#cxt-img").height());
 
                     html2canvas(element.get(0)).then(function(canvas) {
-                        $("#cxt-preview").html(canvas);
+                        $("#cxt-preview").append(canvas);
                         getCanvas = canvas;
                     });
+
+                    $("#cxt-preview-elm").resizable({
+                        containment: "parent",
+                        stop: function(event, ui) {
+                            $("#cxt-elm").width(ui.size.width * ($("#cxt-builder").width() / $("#cxt-preview").width()));
+                            $("#cxt-elm").height(ui.size.height * ($("#cxt-builder").height() / $("#cxt-preview").height()));
+                        }
+                    }).draggable({
+                        containment: "parent",
+                        stop: function(event, ui) {
+                            $("#cxt-elm").css({
+                                top: ui.position.top * $("#cxt-builder").width() / $("#cxt-preview").width(),
+                                left: ui.position.left * $("#cxt-builder").height() / $("#cxt-preview").height(),
+                            });
+                        }
+                    });
+
+                    setTimeout(() => {
+                        $("#cxt-preview-elm").css({
+                            width: $("#cxt-preview").width() - 7,
+                            height: $("#cxt-preview").height() - 7,
+                        });
+                    }, (500));
+                    
                 }, 500);
 
                 $("#cropxtender").css("overflow", "hidden");
