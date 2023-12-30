@@ -25,6 +25,19 @@ $.fn.cropxtender = function(options) {
             return cssString;
         }
 
+        const updateClip = (left, top, width, height) => {
+            $("#cxt-preview-img").css('clip', 'rect(' + top + 'px, ' + (left + width) + 'px, ' + (top + height) + 'px, ' + left + 'px)');
+            const rTop = (top * $("#cxt-img").width() / $("#cxt-preview-img").width());
+            const rLeft = (left * $("#cxt-img").height() / $("#cxt-preview-img").height());
+            const rWidth = (width * ($("#cxt-img").width() / $("#cxt-preview-img").width()));
+            const rHeight = (height * ($("#cxt-img").height() / $("#cxt-preview-img").height()));
+            $("#cxt-img").css('clip', 'rect(' + rTop + 'px, ' + (rLeft + rWidth) + 'px, ' + (rTop + rHeight) + 'px, ' + rLeft + 'px)');
+            $("#cxt-img").attr("data-top", rTop);
+            $("#cxt-img").attr("data-left", rLeft);
+            $("#cxt-img").attr("data-width", rWidth);
+            $("#cxt-img").attr("data-height", rHeight);
+        }
+
         fileInput.change(function() {
             if (fileInput[0].files[0].type === "image/jpeg" || fileInput[0].files[0].type === "image/png") {
                 const image = fileInput[0].files[0];
@@ -43,7 +56,6 @@ $.fn.cropxtender = function(options) {
                         </div>
                         <div id="cxt-builder">
                             <div id="cxt-bg">
-                                <div id="cxt-elm"></div>
                                 <img id="cxt-img" src="">
                             </div>
                         </div>
@@ -98,28 +110,23 @@ $.fn.cropxtender = function(options) {
                     padding: 1rem;
                 }
                 #cxt-preview {
-                    width : 100%;
+                    max-width: 500px;
                     max-height: 450px;
                     overflow-y: scroll;
                     overflow-x: hidden;
                     position: relative;
+                }
+                #cxt-preview img {
+                    width: 100% !important;
+                    height: auto !important;
                 }
                 #cxt-preview-elm {
                     width: 100%;
                     height: 100%;
                     position: absolute;
                     border: 2px #adf dashed;
+                    top: 0;
                     box-shadow: 0px 0px 0px 500px rgba(0, 0, 0, 0.5);
-                }
-                #cxt-elm {
-                    width: 100%;
-                    height: 100%;
-                    z-index: 2;
-                    position: absolute;
-                }
-                #cxt-preview canvas {
-                    width: 100% !important;
-                    height: auto !important;
                 }
                 #cxt-actions {
                     display: flex;
@@ -179,6 +186,7 @@ $.fn.cropxtender = function(options) {
 
                 reader.onload = function(e){
                     $("#cxt-img").attr("src", e.target.result);
+                    $("#cxt-preview").prepend(`<img id="cxt-preview-img" src="${e.target.result}" />`);
                 }
 
                 reader.readAsDataURL(image);
@@ -186,31 +194,19 @@ $.fn.cropxtender = function(options) {
                 $("#cropxtender").css("overflow", "visible");
 
                 setTimeout(() => {
-                    const element = $("#cxt-builder");
                     $("#cxt-bg").width($("#cxt-img").width());
                     $("#cxt-bg").height($("#cxt-img").height());
-                    
                     $("#cxt-builder").width($("#cxt-img").width());
                     $("#cxt-builder").height($("#cxt-img").height());
-
-                    html2canvas(element.get(0)).then(function(canvas) {
-                        $("#cxt-preview").append(canvas);
-                        getCanvas = canvas;
-                    });
-
                     $("#cxt-preview-elm").resizable({
                         containment: "parent",
-                        stop: function(event, ui) {
-                            $("#cxt-elm").width(ui.size.width * ($("#cxt-builder").width() / $("#cxt-preview").width()));
-                            $("#cxt-elm").height(ui.size.height * ($("#cxt-builder").height() / $("#cxt-preview").height()));
+                        stop: function (event, ui) {
+                            updateClip(ui.position.left, ui.position.top, ui.size.width, ui.size.height);
                         }
                     }).draggable({
                         containment: "parent",
-                        stop: function(event, ui) {
-                            $("#cxt-elm").css({
-                                top: ui.position.top * $("#cxt-builder").width() / $("#cxt-preview").width(),
-                                left: ui.position.left * $("#cxt-builder").height() / $("#cxt-preview").height(),
-                            });
+                        stop: function (event, ui) {
+                            updateClip(ui.position.left, ui.position.top, $("#cxt-preview-elm").width(), $("#cxt-preview-elm").height());
                         }
                     });
 
@@ -241,13 +237,27 @@ $.fn.cropxtender = function(options) {
                     });
                 } else {
                     $("#cxt-save").click(function() {
-                        const dataTransfer = new DataTransfer();
-                        const dataUrl = getCanvas.toDataURL("image/png");
-                        const blob = dataURLtoBlob(dataUrl);
-                        const file = new File([blob], 'image.png', { type: 'image/png' });
-                        dataTransfer.items.add(file);
-                        fileInput[0].files = dataTransfer.files;
-                        $("#cropxtender").remove();
+                        const left = $("#cxt-img").attr("data-left");
+                        const top = $("#cxt-img").attr("data-top");
+                        const width = $("#cxt-img").attr("data-width");
+                        const height = $("#cxt-img").attr("data-height");
+            
+                        const canvas = $("<canvas>").attr("width", width).attr("height", height);
+                        const ctx = canvas[0].getContext('2d');
+
+                        const img = new Image();
+                        img.src = 'image.jpg';
+                        img.onload = function () {
+                            ctx.drawImage(img, -left, -top);
+                            const dataUrl = canvas[0].toDataURL("image/png");
+                            const dataTransfer = new DataTransfer();
+                            const blob = dataURLtoBlob(dataUrl);
+                            const file = new File([blob], 'image.png', { type: 'image/png' });
+                            dataTransfer.items.add(file);
+                            fileInput[0].files = dataTransfer.files;
+                            $("#cropxtender").remove();
+                        };
+
                     });
                 }
             }
