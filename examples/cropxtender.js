@@ -42,7 +42,7 @@ $.fn.cropxtender = function(options) {
             if (fileInput[0].files[0].type === "image/jpeg" || fileInput[0].files[0].type === "image/png") {
                 const image = fileInput[0].files[0];
 
-                $("body").append(`
+                let bodyHTML = `    
                     <div id="cropxtender">
                         <div id="cxt-backdrop"></div>
                         <div id="cxt-modal">
@@ -60,17 +60,26 @@ $.fn.cropxtender = function(options) {
                             </div>
                         </div>
                     </div>
-                    <script src="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js" integrity="sha512-uto9mlQzrs59VwILcLiRYeLKPPbS/bT71da/OEBYEwcdNUk8jYIy+D176RYoop1Da+f9mvkYrmj5MCLZWEtQuA==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-                `);
-                $("head").append(`
-                <link rel="stylesheet" type="text/css" href="http://code.jquery.com/ui/1.9.2/themes/base/jquery-ui.css"/>
-                `);
+                `;
+
+                if (!(options && options.jqueryUiImport && typeof options.jqueryUiImport === "string" && options.jqueryUiImport === "disabled")) {
+                    bodyHTML += `<script src="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js" integrity="sha512-uto9mlQzrs59VwILcLiRYeLKPPbS/bT71da/OEBYEwcdNUk8jYIy+D176RYoop1Da+f9mvkYrmj5MCLZWEtQuA==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>`;
+                }
+
+                if (!(options && options.cssImport && typeof options.cssImport === "string" && options.cssImport === "disabled")) {
+                    $("head").append(`
+                        <link rel="stylesheet" type="text/css" href="http://code.jquery.com/ui/1.9.2/themes/base/jquery-ui.css"/>
+                    `);
+                }
+
+                $("body").append(bodyHTML);
+                
 
                 if (options && options.saveButtonText && typeof options.saveButtonText === "string") {
-                    $("#cxt-save").text(options.saveButtonText);
+                    $("#cxt-save").html(options.saveButtonText);
                 }
                 if (options && options.closeButtonText && typeof options.closeButtonText === "string") {
-                    $("#cxt-close").text(options.closeButtonText);
+                    $("#cxt-close").html(options.closeButtonText);
                 }
 
                 let rules = `
@@ -225,10 +234,16 @@ $.fn.cropxtender = function(options) {
                     fileInput.val("");
                 });
  
-                $("#cxt-close").click(function() {
-                    $("#cropxtender").remove();
-                    fileInput.val("");
-                });
+                if (options && options.closeFunction && typeof options.closeFunction === "function") {
+                    $("#cxt-close").click(function() {
+                        options.closeFunction.call();
+                    });
+                } else {
+                    $("#cxt-close").click(function() {
+                        $("#cropxtender").remove();
+                        fileInput.val("");
+                    });
+                }
 
                 if (options && options.saveFunction && typeof options.saveFunction === 'function') {
                     $("#cxt-save").click(function() {
