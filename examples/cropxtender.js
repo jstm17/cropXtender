@@ -25,6 +25,33 @@ $.fn.cropxtender = function(options) {
             return cssString;
         }
 
+        const cropperOption = (croppingAspectRatio = false) => {
+            const elm = $("#cxt-preview-elm");
+            if (croppingAspectRatio) {
+                elm.width( elm.width() * croppingAspectRatio.x);
+                elm.height( elm.height() * croppingAspectRatio.y);
+            }
+
+            elm.resizable({
+                containment: "parent",
+                aspectRatio: croppingAspectRatio ? true : false,
+                stop: function (event, ui) {
+                    updateClip(ui.position.left, ui.position.top, ui.size.width, ui.size.height);
+                }
+            }).draggable({
+                containment: "parent",
+                stop: function (event, ui) {
+                    updateClip(ui.position.left, ui.position.top, elm.width(), elm.height());
+                }
+            }).css({
+                "display": "block",
+            });
+
+            if (options && options.resize === false) {
+                elm.resizable("disable");
+            }
+        }
+
         const updateClip = (left, top, width, height) => {
             $("#cxt-preview-img").css('clip', 'rect(' + top + 'px, ' + (left + width) + 'px, ' + (top + height) + 'px, ' + left + 'px)');
             const rTop = (top * $("#cxt-img").width() / $("#cxt-preview-img").width());
@@ -70,11 +97,11 @@ $.fn.cropxtender = function(options) {
                     </div>
                 `;
 
-                if (!(options && options.jqueryUiImport && typeof options.jqueryUiImport === "string" && options.jqueryUiImport === "disabled")) {
+                if (!(options && options.jqueryUiImport === false)) {
                     bodyHTML += `<script src="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js" integrity="sha512-uto9mlQzrs59VwILcLiRYeLKPPbS/bT71da/OEBYEwcdNUk8jYIy+D176RYoop1Da+f9mvkYrmj5MCLZWEtQuA==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>`;
                 }
 
-                if (!(options && options.cssImport && typeof options.cssImport === "string" && options.cssImport === "disabled")) {
+                if (!(options && options.cssImport === false)) {
                     $("head").append(`
                         <link rel="stylesheet" type="text/css" href="http://code.jquery.com/ui/1.9.2/themes/base/jquery-ui.css"/>
                     `);
@@ -161,6 +188,7 @@ $.fn.cropxtender = function(options) {
                     border: 2px #adf dashed;
                     top: 0;
                     box-shadow: 0px 0px 0px 500px rgba(0, 0, 0, 0.5);
+                    display: none;
                 }
                 #cxt-actions {
                     display: flex;
@@ -246,17 +274,14 @@ $.fn.cropxtender = function(options) {
                     $("#cxt-bg").height($("#cxt-img").height());
                     $("#cxt-builder").width($("#cxt-img").width());
                     $("#cxt-builder").height($("#cxt-img").height());
-                    $("#cxt-preview-elm").resizable({
-                        containment: "parent",
-                        stop: function (event, ui) {
-                            updateClip(ui.position.left, ui.position.top, ui.size.width, ui.size.height);
+
+/*                     if (!(options && options.cropping === false)) {
+                        if (options.croppingAspectRatio) {
+                            cropperOption(options.croppingAspectRatio);
+                        } else {
+                            cropperOption();
                         }
-                    }).draggable({
-                        containment: "parent",
-                        stop: function (event, ui) {
-                            updateClip(ui.position.left, ui.position.top, $("#cxt-preview-elm").width(), $("#cxt-preview-elm").height());
-                        }
-                    });
+                    } */
 
                     setTimeout(() => {
                         $("#cxt-preview-elm").css({
@@ -285,19 +310,21 @@ $.fn.cropxtender = function(options) {
                     });
                 }
 
-                // cropping: , (default true)
-                // croppingButtonText: ,
-                // croppingAspectRatio: , (default none)
+                if (!(options && options.cropping === false)) {
+                    $("#cxt-crop-btn").click(function() {
+                        if (options.croppingAspectRatio) {
+                            cropperOption(options.croppingAspectRatio);
+                        } else {
+                            cropperOption();
+                        }
+                    })
+                }
+
                 // rotating: , (default false)
-                // rotatingButtonText: ,
                 // flipping: , (default false)
-                // flippingButtonText: ,
                 // zooming: , (default false)
-                // zoomingButtonText: ,
                 // filtering: , (default false)
-                // filteringButtonText: ,
                 // iaGenerating: , (default false)
-                // iaGeneratingButtonText: ,
 
                 if (options && options.saveFunction && typeof options.saveFunction === 'function') {
                     $("#cxt-save").click(function() {
