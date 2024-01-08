@@ -49,6 +49,14 @@ $.fn.cropxtender = function(options) {
                             <div id="cxt-preview">
                                 <div id="cxt-preview-elm"></div>
                             </div>
+                            <div id="cxt-options">
+                                <button id="cxt-crop-btn">Crop</button>
+                                <button id="cxt-rotate-btn">Rotate</button>
+                                <button id="cxt-flip-btn">Flip</button>
+                                <button id="cxt-zoom-btn">Zoom</button>
+                                <button id="cxt-filter-btn">Filter</button>
+                                <button id="cxt-ia-btn">IA</button>
+                            </div>
                             <div id="cxt-actions">
                                 <button id="cxt-close">Annuler</button>
                                 <button id="cxt-save">Valider</button>
@@ -80,6 +88,24 @@ $.fn.cropxtender = function(options) {
                 }
                 if (options && options.closeButtonText && typeof options.closeButtonText === "string") {
                     $("#cxt-close").html(options.closeButtonText);
+                }
+                if (options && options.croppingButtonText && typeof options.croppingButtonText === "string") {
+                    $("#cxt-crop-btn").html(options.croppingButtonText);
+                }
+                if (options && options.rotatingButtonText && typeof options.rotatingButtonText === "string") {
+                    $("#cxt-rotate-btn").html(options.rotatingButtonText);
+                }
+                if (options && options.flippingButtonText && typeof options.flippingButtonText === "string") {
+                    $("#cxt-flip-btn").html(options.flippingButtonText);
+                }
+                if (options && options.zoomingButtonText && typeof options.zoomingButtonText === "string") {
+                    $("#cxt-zoom-btn").html(options.zoomingButtonText);
+                }
+                if (options && options.filteringButtonText && typeof options.filteringButtonText === "string") {
+                    $("#cxt-filter-btn").html(options.filteringButtonText);
+                }
+                if (options && options.iaGeneratingButtonText && typeof options.iaGeneratingButtonText === "string") {
+                    $("#cxt-ia-btn").html(options.iaGeneratingButtonText);
                 }
 
                 let rules = `
@@ -182,6 +208,20 @@ $.fn.cropxtender = function(options) {
                     rules += "#cxt-modal " + css;
                 }
 
+                if (options.modalStyle) {
+                    const css = objectToCssString(options.modalStyle);
+                    rules += "#cxt-modal " + css;
+                }
+
+                if (options.optionButtonStyle) {
+                    const css = objectToCssString(options.optionButtonStyle);
+                    rules += "#cxt-options button" + css;
+                }
+                if (options.optionButtonContainerStyle) {
+                    const css = objectToCssString(options.optionButtonContainerStyle);
+                    rules += "#cxt-options " + css;
+                }
+
                 if ($("style").length > 0) {
                     if (!$("style").text().includes(rules)) {
                         $("style").append(rules);
@@ -244,6 +284,20 @@ $.fn.cropxtender = function(options) {
                         fileInput.val("");
                     });
                 }
+
+                // cropping: , (default true)
+                // croppingButtonText: ,
+                // croppingAspectRatio: , (default none)
+                // rotating: , (default false)
+                // rotatingButtonText: ,
+                // flipping: , (default false)
+                // flippingButtonText: ,
+                // zooming: , (default false)
+                // zoomingButtonText: ,
+                // filtering: , (default false)
+                // filteringButtonText: ,
+                // iaGenerating: , (default false)
+                // iaGeneratingButtonText: ,
 
                 if (options && options.saveFunction && typeof options.saveFunction === 'function') {
                     $("#cxt-save").click(function() {
