@@ -89,23 +89,23 @@
 
 
         $("#export-btn").on("click", function () {
-            var left = $("#cropped-image").attr("data-left");
-            var top = $("#cropped-image").attr("data-top");
-            var width = $("#cropped-image").attr("data-width");
-            var height = $("#cropped-image").attr("data-height");
+            const left = $("#cropped-image").attr("data-left");
+            const top = $("#cropped-image").attr("data-top");
+            const width = $("#cropped-image").attr("data-width");
+            const height = $("#cropped-image").attr("data-height");
 
-            var canvas = $("<canvas>").attr("width", width).attr("height", height);
-            var ctx = canvas[0].getContext('2d');
+            console.log(left, top, width, height);
+            const canvas = $("<canvas>").attr("width", width).attr("height", height);
+            const ctx = canvas[0].getContext('2d');
 
-            var img = new Image();
+            const img = new Image();
             img.src = 'image.jpg';
             img.onload = function () {
                 ctx.drawImage(img, -left, -top);
 
-                var newImage = new Image();
                 const dataUrl = canvas[0].toDataURL();
-                
-                var downloadLink = $("<a>").attr("href", dataUrl).attr("download", "clipped_image.png");
+                $("#test").append(`<img src="${dataUrl}" alt="">`);
+                const downloadLink = $("<a>").attr("href", dataUrl).attr("download", "clipped_image.png");
                 $("body").append(downloadLink);
                 downloadLink[0].click();
                 downloadLink.remove();

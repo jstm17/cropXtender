@@ -8,7 +8,7 @@
 </head>
 <body>
     <input type="file" name="image" id="cropxtender-input">
-
+    <img id="result" src="" alt="">
     <script type="text/javascript" src="cropxtender.js"></script>
     <script>
         $('document').ready(function(){            
@@ -29,31 +29,32 @@
                     "width": "100px",
                     "padding": "2rem",
                 },
-                // modalStyle: { // d
+                // modalStyle: {
                 //     "width": "700px",
                 //     "height": "800px",
                 // }
-                // saveFunction: save, // d
-                // closeFunction: , // d
-                // jqueryUiImport: false, // (default true | false) // d
-                // cssImport: false, // (default true | false) // d
-                // croppingButtonText: , // d
-                croppingAspectRatio: {x: 0.6, y: 1}, // (default none) d
-                // resize: false, // (default true)
-                // rotatingButtonText: , // d
-                // flippingButtonText: , // d
-                // zoomingButtonText: , // d
-                // filteringButtonText: , // d
-                // iaGeneratingButtonText: , // d
-                // optionButtonStyle: , // d
-                // optionButtonContainerStyle: , // d
-                
+                // saveFunction: save,
+                // closeFunction: ,
+                // jqueryUiImport: false, // (default true | false)
+                // cssImport: false, // (default true | false)
+                // croppingButtonText: ,
+                // croppingAspectRatio: {x: 0.6, y: 1}, // (default none)
+                // rotatingButtonText: ,
+                // flippingButtonText: ,
+                // zoomingButtonText: ,
+                // filteringButtonText: ,
+                // iaGeneratingButtonText: ,
+                // optionButtonStyle: ,
+                // optionButtonContainerStyle: ,
                 // cropping: false, // (default true)
-                // rotating: , (default false)
-                // flipping: , (default false)
-                // zooming: , (default false)
-                // filtering: , (default false)
-                // iaGenerating: , (default false)
+                // resize: false, // (default true)
+
+                // TODO
+                rotating: true, // (default false)
+                flipping: true, // (default false)
+                zooming: true, // (default false)
+                filtering: true, // (default false)
+                // iaGenerating: , // (default false)
 
 
             });

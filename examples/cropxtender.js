@@ -1,7 +1,6 @@
 $.fn.cropxtender = function(options) {
     return this.each(function() {
         const fileInput = $(this);
-        let getCanvas;
         console.log(options);
 
         const dataURLtoBlob = (dataUrl) => {
@@ -41,7 +40,7 @@ $.fn.cropxtender = function(options) {
             }).draggable({
                 containment: "parent",
                 stop: function (event, ui) {
-                    updateClip(ui.position.left, ui.position.top, elm.width(), elm.height());
+                    updateClip(ui.position.left, ui.position.top, $("#cxt-preview-elm").width(), $("#cxt-preview-elm").height());
                 }
             }).css({
                 "display": "block",
@@ -89,11 +88,7 @@ $.fn.cropxtender = function(options) {
                                 <button id="cxt-save">Valider</button>
                             </div>
                         </div>
-                        <div id="cxt-builder">
-                            <div id="cxt-bg">
-                                <img id="cxt-img" src="">
-                            </div>
-                        </div>
+                        <img id="cxt-img" src="">
                     </div>
                 `;
 
@@ -197,27 +192,10 @@ $.fn.cropxtender = function(options) {
                     width: 100%;
                     padding-top: 1rem;
                 }
-                #cxt-builder {
-                    position: absolute;
-                    top: 100vh;
-                    width: 1000px;
-                    height: 1000px;
-                    background: #f0f0f0;
-                }
-                #cxt-bg {
-                    position: absolute;
-                    left: 0px;
-                    right: 0px;
-                    justify-content: center;
-                    top: 0px;
-                    margin: 0 auto;
-                    height: 100%;
-                    display: flex;
-                }
                 #cxt-img {
                     position: absolute;
-                    max-height: 100%;
-                    object-fit: fill;
+                    top: 100vh;
+                    left: 0;
                 }
                 `;
 
@@ -275,14 +253,6 @@ $.fn.cropxtender = function(options) {
                     $("#cxt-builder").width($("#cxt-img").width());
                     $("#cxt-builder").height($("#cxt-img").height());
 
-/*                     if (!(options && options.cropping === false)) {
-                        if (options.croppingAspectRatio) {
-                            cropperOption(options.croppingAspectRatio);
-                        } else {
-                            cropperOption();
-                        }
-                    } */
-
                     setTimeout(() => {
                         $("#cxt-preview-elm").css({
                             width: $("#cxt-preview").width() - 7,
@@ -318,13 +288,34 @@ $.fn.cropxtender = function(options) {
                             cropperOption();
                         }
                     })
+                } else {
+                    $("#cxt-crop-btn").remove();
                 }
 
-                // rotating: , (default false)
-                // flipping: , (default false)
-                // zooming: , (default false)
-                // filtering: , (default false)
-                // iaGenerating: , (default false)
+                if (options && options.rotating === true) {
+                } else {
+                    $("#cxt-rotate-btn").remove();
+                }
+
+                if (options && options.flipping === true) {
+                } else {
+                    $("#cxt-flip-btn").remove();
+                }
+
+                if (options && options.zooming === true) {
+                } else {
+                    $("#cxt-zoom-btn").remove();
+                }
+
+                if (options && options.filtering === true) {
+                } else {
+                    $("#cxt-filter-btn").remove();
+                }
+
+                if (options && options.iaGenerating === true) {
+                } else {
+                    $("#cxt-ia-btn").remove();
+                }
 
                 if (options && options.saveFunction && typeof options.saveFunction === 'function') {
                     $("#cxt-save").click(function() {
@@ -336,23 +327,33 @@ $.fn.cropxtender = function(options) {
                         const top = $("#cxt-img").attr("data-top");
                         const width = $("#cxt-img").attr("data-width");
                         const height = $("#cxt-img").attr("data-height");
-            
+
                         const canvas = $("<canvas>").attr("width", width).attr("height", height);
                         const ctx = canvas[0].getContext('2d');
+            
+                        const reader = new FileReader();
 
-                        const img = new Image();
-                        img.src = 'image.jpg';
-                        img.onload = function () {
-                            ctx.drawImage(img, -left, -top);
-                            const dataUrl = canvas[0].toDataURL("image/png");
-                            const dataTransfer = new DataTransfer();
-                            const blob = dataURLtoBlob(dataUrl);
-                            const file = new File([blob], 'image.png', { type: 'image/png' });
-                            dataTransfer.items.add(file);
-                            fileInput[0].files = dataTransfer.files;
-                            $("#cropxtender").remove();
+                        reader.onload = function (e) {
+                            const dataUrl = e.target.result;
+
+                            const img = new Image();
+                            img.src = dataUrl;
+
+                            img.onload = function () {
+                                ctx.drawImage(img, -left, -top);
+
+                                const dataUrl = canvas[0].toDataURL();
+                                $("#result").attr("src", dataUrl);
+                                const dataTransfer = new DataTransfer();
+                                const blob = dataURLtoBlob(dataUrl);
+                                const file = new File([blob], 'image.png', { type: 'image/png' });
+                                dataTransfer.items.add(file);
+                                fileInput[0].files = dataTransfer.files;
+                                $("#cropxtender").remove();
+                            };
                         };
 
+                        reader.readAsDataURL(image);
                     });
                 }
             }
