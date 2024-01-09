@@ -248,11 +248,6 @@ $.fn.cropxtender = function(options) {
                 $("#cropxtender").css("overflow", "visible");
 
                 setTimeout(() => {
-                    $("#cxt-bg").width($("#cxt-img").width());
-                    $("#cxt-bg").height($("#cxt-img").height());
-                    $("#cxt-builder").width($("#cxt-img").width());
-                    $("#cxt-builder").height($("#cxt-img").height());
-
                     setTimeout(() => {
                         $("#cxt-preview-elm").css({
                             width: $("#cxt-preview").width() - 7,
@@ -293,6 +288,14 @@ $.fn.cropxtender = function(options) {
                 }
 
                 if (options && options.rotating === true) {
+                    $("#cxt-rotate-btn").click(function() {
+                        const elm = $('#cxt-preview-img, #cxt-preview-elm');
+                        const matches = elm.css('transform').match(/rotate\((.*?)deg\)/);
+                        let currentAngle = matches && matches[1] ? parseFloat(matches[1]) : 0;
+                        elm.css("transform", "rotate("+ (currentAngle + 90) +"deg)");
+                        const rotationAngle = ((currentAngle + 90) % 360) * Math.PI / 180;
+                        elm.attr("data-rotate", rotationAngle);
+                    });
                 } else {
                     $("#cxt-rotate-btn").remove();
                 }
@@ -340,7 +343,20 @@ $.fn.cropxtender = function(options) {
                             img.src = dataUrl;
 
                             img.onload = function () {
-                                ctx.drawImage(img, -left, -top);
+                                if (options && options.rotating === true) {
+                                    const rotationAngle = $("#cxt-preview-img").attr("data-rotate");
+                                    canvas[0].width = height;
+                                    canvas[0].height = width;
+                                    const x = height / 2;
+                                    const y = width / 2;
+                                    ctx.translate(x, y);
+                                    ctx.rotate(rotationAngle);
+                                    ctx.drawImage(img, -((width) / 2) - left, -(height / 2) - top);
+                                    ctx.rotate(-rotationAngle);
+                                    ctx.translate(-x, -y);
+                                } else {
+                                    ctx.drawImage(img, -left, -top);
+                                }
 
                                 const dataUrl = canvas[0].toDataURL();
                                 $("#result").attr("src", dataUrl);
