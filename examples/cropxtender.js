@@ -30,7 +30,12 @@ $.fn.cropxtender = function(options) {
                 elm.width( elm.width() * croppingAspectRatio.x);
                 elm.height( elm.height() * croppingAspectRatio.y);
             }
-
+            if (elm.resizable("instance")) {
+                elm.resizable("destroy");
+            }
+            if (elm.draggable("instance")) {
+                elm.draggable("destroy");
+            }
             elm.resizable({
                 containment: "parent",
                 aspectRatio: croppingAspectRatio ? true : false,
@@ -198,6 +203,11 @@ $.fn.cropxtender = function(options) {
                     top: 100vh;
                     left: 0;
                 }
+                #cxt-zoom-slider {
+                    position: absolute;
+                    left: 10px;
+                    bottom: 10px;
+                }
                 `;
 
                 if (options.saveButtonStyle) {
@@ -280,11 +290,15 @@ $.fn.cropxtender = function(options) {
                 if (!(options && options.cropping === false)) {
                     $("#cxt-crop-btn").click(function() {
                         $("#cxt-preview-elm").css("display", "none");
+                        $("#cxt-zoom-slider").remove();
+
                         if (options.croppingAspectRatio) {
                             cropperOption(options.croppingAspectRatio);
                         } else {
                             cropperOption();
                         }
+
+                        $('#cxt-preview-img').css("transform", "");
                     })
                 } else {
                     $("#cxt-crop-btn").remove();
@@ -293,12 +307,15 @@ $.fn.cropxtender = function(options) {
                 if (options && options.rotating === true) {
                     $("#cxt-rotate-btn").attr("data-rotate", 0);
                     $("#cxt-rotate-btn").click(function() {
-                        const elm = $('#cxt-preview-img, #cxt-preview-elm');
+                        const elm = $('#cxt-preview-img');
                         $("#cxt-preview-elm").css("display", "none");
+                        $("#cxt-zoom-slider").remove();
+
                         const currentAngle = parseInt($(this).attr("data-rotate"));
                         const flipX = elm.attr("data-flip-x") === "x";
                         const flipY = elm.attr("data-flip-y") === "y";
-                        elm.css("transform", `rotate(${currentAngle + 90}deg) scale(${flipX ? "-1" : "1"}, ${flipY ? "-1" : "1"})`);
+                        const zoom  = elm.attr("data-zoom") ? parseFloat(elm.attr("data-zoom")) : 1;
+                        elm.css("transform", `rotate(${currentAngle + 90}deg) scale(${flipX ? "-" + zoom : zoom}, ${flipY ? "-" + zoom : zoom})`);
                         const rotationAngle = ((currentAngle + 90) % 360) * Math.PI / 180;
                         elm.attr("data-rotate", rotationAngle);
                         $(this).attr("data-rotate", currentAngle + 90);
@@ -309,14 +326,15 @@ $.fn.cropxtender = function(options) {
 
                 if (options && options.flippingX === true) {
                     $("#cxt-flip-x-btn").click(function() {
-                        const elm = $('#cxt-preview-img, #cxt-preview-elm');
+                        const elm = $('#cxt-preview-img');
                         $("#cxt-preview-elm").css("display", "none");
+                        $("#cxt-zoom-slider").remove();
 
                         const flipX = elm.attr("data-flip-x") === "x";
                         const flipY = elm.attr("data-flip-y") === "y";
-                        console.log(flipX, flipY);
                         const rotate= parseInt($("#cxt-rotate-btn").attr("data-rotate"));
-                        elm.css("transform", `${rotate ? "rotate("+rotate+"deg)" : ""} scale(${flipX ? '1' : '-1'}, ${flipY ? '-1' : '1'})`);
+                        const zoom  = elm.attr("data-zoom") ? parseFloat(elm.attr("data-zoom")) : 1;
+                        elm.css("transform", `${rotate ? "rotate("+rotate+"deg)" : ""} scale(${flipX ? zoom : '-' + zoom}, ${flipY ? '-' + zoom : zoom})`);
                         elm.attr("data-flip-x", flipX ? "" : "x");
                     });
                 } else {
@@ -325,13 +343,15 @@ $.fn.cropxtender = function(options) {
                 
                 if (options && options.flippingY === true) {
                     $("#cxt-flip-y-btn").click(function() {
-                        const elm = $('#cxt-preview-img, #cxt-preview-elm');
+                        const elm = $('#cxt-preview-img');
                         $("#cxt-preview-elm").css("display", "none");
+                        $("#cxt-zoom-slider").remove();
 
                         const flipY = elm.attr("data-flip-y") === "y";
                         const flipX = elm.attr("data-flip-x") === "x";
                         const rotate= parseInt($("#cxt-rotate-btn").attr("data-rotate"));
-                        elm.css("transform", `${rotate ? "rotate("+rotate+"deg)" : ""} scale(${flipX ? '-1' : '1'}, ${flipY ? '1' : '-1'})`);
+                        const zoom  = elm.attr("data-zoom") ? parseFloat(elm.attr("data-zoom")) : 1;
+                        elm.css("transform", `${rotate ? "rotate("+rotate+"deg)" : ""} scale(${flipX ? '-' + zoom : zoom}, ${flipY ? zoom : '-' + zoom})`);
                         elm.attr("data-flip-y", flipY ? "" : "y");
                     });
                 } else {
@@ -339,6 +359,23 @@ $.fn.cropxtender = function(options) {
                 }
 
                 if (options && options.zooming === true) {
+                    $("#cxt-zoom-btn").click(function() {
+                        if ($("#cxt-zoom-slider").length == 0) {
+                            $("#cxt-preview").append(`<input id="cxt-zoom-slider" type="range" min="1" max="200" value="100">`);
+                        }
+                        $("#cxt-zoom-slider").off();
+                        $("#cxt-zoom-slider").on("input", function() {
+                            const elm = $('#cxt-preview-img');
+                            const zoom = $(this).val() / 100;
+                            $("#cxt-preview-elm").css("display", "none");
+                            const flipY = elm.attr("data-flip-y") === "y";
+                            const flipX = elm.attr("data-flip-x") === "x";
+                            const rotate= parseInt($("#cxt-rotate-btn").attr("data-rotate"));
+                            $("#cxt-preview-img").css("transform", "scale("+zoom+")");
+                            elm.css("transform", `${rotate ? "rotate("+rotate+"deg)" : ""} scale(${flipX ? '-' + (zoom) : (zoom)}, ${flipY ? '-' + (zoom) : (zoom)})`);
+                            elm.attr("data-zoom", zoom);
+                        });
+                    });
                 } else {
                     $("#cxt-zoom-btn").remove();
                 }
@@ -380,6 +417,7 @@ $.fn.cropxtender = function(options) {
                                     const rotationAngle = $("#cxt-preview-img").attr("data-rotate");
                                     let x = width / 2;
                                     let y = height / 2;
+                                    let zoom = 1;
                                     if ($("#cxt-rotate-btn").attr("data-rotate") % 90 === 0) {
                                         canvas[0].width = height;
                                         canvas[0].height = width;
@@ -398,7 +436,10 @@ $.fn.cropxtender = function(options) {
                                     if (options.flippingX === true || options.flippingY === true) {
                                         const flipX = $("#cxt-preview-img").attr("data-flip-x") === "x";
                                         const flipY = $("#cxt-preview-img").attr("data-flip-y") === "y";
-                                        ctx.scale(flipX ? -1 : 1, flipY ? -1 : 1);
+                                        if (options.zooming === true && $("#cxt-preview-img").attr("data-zoom")) {
+                                            zoom = parseFloat($("#cxt-preview-img").attr("data-zoom"));
+                                        }
+                                        ctx.scale(flipX ? -zoom : zoom, flipY ? -zoom : zoom);
                                     }
 
                                     ctx.drawImage(img, -(width / 2) - left, -(height / 2) - top);
@@ -406,7 +447,10 @@ $.fn.cropxtender = function(options) {
                                     if (options.flippingX === true || options.flippingY === true) {
                                         const flipX = $("#cxt-preview-img").attr("data-flip-x") === "x";
                                         const flipY = $("#cxt-preview-img").attr("data-flip-y") === "y";
-                                        ctx.scale(flipX ? 1 : -1, flipY ? -1 : -1);
+                                        if (options.zooming === true && $("#cxt-preview-img").attr("data-zoom")) {
+                                            zoom = parseFloat($("#cxt-preview-img").attr("data-zoom"));
+                                        }
+                                        ctx.scale(flipX ? zoom : -zoom, flipY ? zoom : -zoom);
                                     }
 
                                     ctx.rotate(-rotationAngle);
@@ -414,17 +458,24 @@ $.fn.cropxtender = function(options) {
                                 } else {
                                     let x = width / 2;
                                     let y = height / 2;
+                                    let zoom = 1;
                                     ctx.translate(x, y);
                                     if (options.flippingX === true || options.flippingY === true) {
                                         const flipX = $("#cxt-preview-img").attr("data-flip-x") === "x";
                                         const flipY = $("#cxt-preview-img").attr("data-flip-y") === "y";
-                                        ctx.scale(flipX ? -1 : 1, flipY ? -1 : 1);
+                                        if (options.zooming === true && $("#cxt-preview-img").attr("data-zoom")) {
+                                            zoom = parseFloat($("#cxt-preview-img").attr("data-zoom"));
+                                        }
+                                        ctx.scale(flipX ? -zoom : zoom, flipY ? -zoom : zoom);
                                     }
                                     ctx.drawImage(img, -(width / 2) - left, -(height / 2) - top);
                                     if (options.flippingX === true || options.flippingY === true) {
                                         const flipX = $("#cxt-preview-img").attr("data-flip-x") === "x";
                                         const flipY = $("#cxt-preview-img").attr("data-flip-y") === "y";
-                                        ctx.scale(flipX ? 1 : -1, flipY ? -1 : -1);
+                                        if (options.zooming === true && $("#cxt-preview-img").attr("data-zoom")) {
+                                            zoom = parseFloat($("#cxt-preview-img").attr("data-zoom"));
+                                        }
+                                        ctx.scale(flipX ? zoom : -zoom, flipY ? zoom : -zoom);
                                     }
                                     ctx.translate(-x, -y);
                                 }
