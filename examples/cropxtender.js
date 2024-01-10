@@ -78,7 +78,8 @@ $.fn.cropxtender = function(options) {
                             <div id="cxt-options">
                                 <button id="cxt-crop-btn">Crop</button>
                                 <button id="cxt-rotate-btn">Rotate</button>
-                                <button id="cxt-flip-btn">Flip</button>
+                                <button id="cxt-flip-x-btn">Flip X</button>
+                                <button id="cxt-flip-y-btn">Flip Y</button>
                                 <button id="cxt-zoom-btn">Zoom</button>
                                 <button id="cxt-filter-btn">Filter</button>
                                 <button id="cxt-ia-btn">IA</button>
@@ -294,19 +295,47 @@ $.fn.cropxtender = function(options) {
                     $("#cxt-rotate-btn").click(function() {
                         const elm = $('#cxt-preview-img, #cxt-preview-elm');
                         $("#cxt-preview-elm").css("display", "none");
-                        const currentAngle = parseInt($("#cxt-rotate-btn").attr("data-rotate"));
-                        elm.css("transform", "rotate("+ (currentAngle + 90) +"deg)");
+                        const currentAngle = parseInt($(this).attr("data-rotate"));
+                        const flipX = elm.attr("data-flip-x") === "x";
+                        const flipY = elm.attr("data-flip-y") === "y";
+                        elm.css("transform", `rotate(${currentAngle + 90}deg) scale(${flipX ? "-1" : "1"}, ${flipY ? "-1" : "1"})`);
                         const rotationAngle = ((currentAngle + 90) % 360) * Math.PI / 180;
                         elm.attr("data-rotate", rotationAngle);
-                        $("#cxt-rotate-btn").attr("data-rotate", currentAngle + 90);
+                        $(this).attr("data-rotate", currentAngle + 90);
                     });
                 } else {
                     $("#cxt-rotate-btn").remove();
                 }
 
-                if (options && options.flipping === true) {
+                if (options && options.flippingX === true) {
+                    $("#cxt-flip-x-btn").click(function() {
+                        const elm = $('#cxt-preview-img, #cxt-preview-elm');
+                        $("#cxt-preview-elm").css("display", "none");
+
+                        const flipX = elm.attr("data-flip-x") === "x";
+                        const flipY = elm.attr("data-flip-y") === "y";
+                        console.log(flipX, flipY);
+                        const rotate= parseInt($("#cxt-rotate-btn").attr("data-rotate"));
+                        elm.css("transform", `${rotate ? "rotate("+rotate+"deg)" : ""} scale(${flipX ? '1' : '-1'}, ${flipY ? '-1' : '1'})`);
+                        elm.attr("data-flip-x", flipX ? "" : "x");
+                    });
                 } else {
-                    $("#cxt-flip-btn").remove();
+                    $("#cxt-flip-x-btn").remove();
+                }
+                
+                if (options && options.flippingY === true) {
+                    $("#cxt-flip-y-btn").click(function() {
+                        const elm = $('#cxt-preview-img, #cxt-preview-elm');
+                        $("#cxt-preview-elm").css("display", "none");
+
+                        const flipY = elm.attr("data-flip-y") === "y";
+                        const flipX = elm.attr("data-flip-x") === "x";
+                        const rotate= parseInt($("#cxt-rotate-btn").attr("data-rotate"));
+                        elm.css("transform", `${rotate ? "rotate("+rotate+"deg)" : ""} scale(${flipX ? '-1' : '1'}, ${flipY ? '1' : '-1'})`);
+                        elm.attr("data-flip-y", flipY ? "" : "y");
+                    });
+                } else {
+                    $("#cxt-flip-y-btn").remove();
                 }
 
                 if (options && options.zooming === true) {
@@ -365,11 +394,39 @@ $.fn.cropxtender = function(options) {
                                     }
                                     ctx.translate(x, y);
                                     ctx.rotate(rotationAngle);
-                                    ctx.drawImage(img, -((width) / 2) - left, -(height / 2) - top);
+
+                                    if (options.flippingX === true || options.flippingY === true) {
+                                        const flipX = $("#cxt-preview-img").attr("data-flip-x") === "x";
+                                        const flipY = $("#cxt-preview-img").attr("data-flip-y") === "y";
+                                        ctx.scale(flipX ? -1 : 1, flipY ? -1 : 1);
+                                    }
+
+                                    ctx.drawImage(img, -(width / 2) - left, -(height / 2) - top);
+
+                                    if (options.flippingX === true || options.flippingY === true) {
+                                        const flipX = $("#cxt-preview-img").attr("data-flip-x") === "x";
+                                        const flipY = $("#cxt-preview-img").attr("data-flip-y") === "y";
+                                        ctx.scale(flipX ? 1 : -1, flipY ? -1 : -1);
+                                    }
+
                                     ctx.rotate(-rotationAngle);
                                     ctx.translate(-x, -y);
                                 } else {
-                                    ctx.drawImage(img, -left, -top);
+                                    let x = width / 2;
+                                    let y = height / 2;
+                                    ctx.translate(x, y);
+                                    if (options.flippingX === true || options.flippingY === true) {
+                                        const flipX = $("#cxt-preview-img").attr("data-flip-x") === "x";
+                                        const flipY = $("#cxt-preview-img").attr("data-flip-y") === "y";
+                                        ctx.scale(flipX ? -1 : 1, flipY ? -1 : 1);
+                                    }
+                                    ctx.drawImage(img, -(width / 2) - left, -(height / 2) - top);
+                                    if (options.flippingX === true || options.flippingY === true) {
+                                        const flipX = $("#cxt-preview-img").attr("data-flip-x") === "x";
+                                        const flipY = $("#cxt-preview-img").attr("data-flip-y") === "y";
+                                        ctx.scale(flipX ? 1 : -1, flipY ? -1 : -1);
+                                    }
+                                    ctx.translate(-x, -y);
                                 }
 
                                 const dataUrl = canvas[0].toDataURL();
