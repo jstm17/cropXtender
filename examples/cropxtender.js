@@ -248,6 +248,7 @@ $.fn.cropxtender = function(options) {
                 $("#cropxtender").css("overflow", "visible");
 
                 setTimeout(() => {
+                    updateClip(0, 0, $("#cxt-preview-img").width(), $("#cxt-preview-img").height());
                     setTimeout(() => {
                         $("#cxt-preview-elm").css({
                             width: $("#cxt-preview").width() - 7,
@@ -277,6 +278,7 @@ $.fn.cropxtender = function(options) {
 
                 if (!(options && options.cropping === false)) {
                     $("#cxt-crop-btn").click(function() {
+                        $("#cxt-preview-elm").css("display", "none");
                         if (options.croppingAspectRatio) {
                             cropperOption(options.croppingAspectRatio);
                         } else {
@@ -288,13 +290,15 @@ $.fn.cropxtender = function(options) {
                 }
 
                 if (options && options.rotating === true) {
+                    $("#cxt-rotate-btn").attr("data-rotate", 0);
                     $("#cxt-rotate-btn").click(function() {
                         const elm = $('#cxt-preview-img, #cxt-preview-elm');
-                        const matches = elm.css('transform').match(/rotate\((.*?)deg\)/);
-                        let currentAngle = matches && matches[1] ? parseFloat(matches[1]) : 0;
+                        $("#cxt-preview-elm").css("display", "none");
+                        const currentAngle = parseInt($("#cxt-rotate-btn").attr("data-rotate"));
                         elm.css("transform", "rotate("+ (currentAngle + 90) +"deg)");
                         const rotationAngle = ((currentAngle + 90) % 360) * Math.PI / 180;
                         elm.attr("data-rotate", rotationAngle);
+                        $("#cxt-rotate-btn").attr("data-rotate", currentAngle + 90);
                     });
                 } else {
                     $("#cxt-rotate-btn").remove();
@@ -345,10 +349,20 @@ $.fn.cropxtender = function(options) {
                             img.onload = function () {
                                 if (options && options.rotating === true) {
                                     const rotationAngle = $("#cxt-preview-img").attr("data-rotate");
-                                    canvas[0].width = height;
-                                    canvas[0].height = width;
-                                    const x = height / 2;
-                                    const y = width / 2;
+                                    let x = width / 2;
+                                    let y = height / 2;
+                                    if ($("#cxt-rotate-btn").attr("data-rotate") % 90 === 0) {
+                                        canvas[0].width = height;
+                                        canvas[0].height = width;
+                                        x = height / 2;
+                                        y = width / 2;
+                                    }
+                                    if ($("#cxt-rotate-btn").attr("data-rotate") % 180 === 0) {
+                                        canvas[0].width = width;
+                                        canvas[0].height = height;
+                                        x = width / 2;
+                                        y = height / 2;
+                                    }
                                     ctx.translate(x, y);
                                     ctx.rotate(rotationAngle);
                                     ctx.drawImage(img, -((width) / 2) - left, -(height / 2) - top);
