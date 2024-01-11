@@ -12,34 +12,30 @@
 </head>
 
 <body>
-    <input type="file" name="image" id="cropxtender-input" accept=".png,.jpg,.jpeg">
-    <img id="result" src="" alt="">
-    <!-- <div id="cropxtender">
-        <div id="cxt-backdrop"></div>
-        <div id="cxt-modal">
-            <div id="cxt-preview">
-                <div id="cxt-preview-elm"></div>
+    <main class="flex justify-center items-center h-[100vh]">
+        <div id="cropxtender-input-container"
+            class="h-[400px] w-10/12 max-w-[800px] border border-dashed border-primary_2 relative flex flex-col justify-center items-center rounded-xl">
+            <input type="file" class="opacity-0 absolute inset-x-0  inset-y-0" size="60" placeholder="Oui" name="image"
+                id="cropxtender-input" accept=".png,.jpg,.jpeg" />
+            <img src="img/ic-drop-image.svg" alt="">
+            <p class="mt-6 mb-5">Déposer l'image ici</p>
+            <p class="text-primary_2">PNG, JPG/JPEG, GIF, BMP</p>
+            <div class="flex items-center my-5">
+                <div class="w-20 h-px rounded bg-gray"></div>
+                <p class="text-xs mx-2">OU</p>
+                <div class="w-20 h-px rounded bg-gray"></div>
             </div>
-            <div id="cxt-options">
-                <button id="cxt-crop-btn"><img attr="Recadrer" src="img/CropXtender/ic-recradrage.svg"></button>
-                <button id="cxt-rotate-btn"><img attr="Rotation" src="img/CropXtender/ic-rotation.svg"></button>
-                <button id="cxt-flip-x-btn"><img attr="Retournement vertical" src="img/CropXtender/ic-retournement-x.svg"></button>
-                <button id="cxt-flip-y-btn"><img attr="Retournement horizontal" src="img/CropXtender/ic-retournement-y.svg"></button>
-                <button id="cxt-zoom-btn"><img attr="Zoom" src="img/CropXtender/ic-zoom.svg"></button>
-                <button id="cxt-filter-btn"><img attr="Filtres" src="img/CropXtender/ic-filtre.svg"></button>
-                <button id="cxt-ia-btn"><img attr="IA génération" src="img/CropXtender/ic-generation.svg"></button>
-            </div>
-            <div id="cxt-actions">
-                <button id="cxt-close">Annuler</button>
-                <button id="cxt-save"><img attr="" src="img/CropXtender/ic-download.svg"></button>
-            </div>
+            <label class="cursor-pointer btn z-10" for="cropxtender-input">
+                Choisir une image
+            </label>
         </div>
-        <div id="cxt-builder">
-            <div id="cxt-bg">
-                <img id="cxt-img" src="">
-            </div>
+        <div class="flex flex-col jusitfy-center items-center">
+            <img id="result" src="" alt="">
+            <div id="ctx-finish" class="btn hidden mt-10 cursor-pointer">Recommencer</div>
         </div>
-    </div> -->
+    </main>
+
+    <script src="https://cdn.tailwindcss.com"></script>
     <script type="text/javascript" src="cropxtender.js"></script>
     <script>
         $('document').ready(function () {
