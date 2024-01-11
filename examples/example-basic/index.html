@@ -14,37 +14,12 @@
 <body>
     <input type="file" name="image" id="cropxtender-input" accept=".png,.jpg,.jpeg">
     <img id="result" src="" alt="">
-    <!-- <div id="cropxtender">
-        <div id="cxt-backdrop"></div>
-        <div id="cxt-modal">
-            <div id="cxt-preview">
-                <div id="cxt-preview-elm"></div>
-            </div>
-            <div id="cxt-options">
-                <button id="cxt-crop-btn"><img attr="Recadrer" src="img/CropXtender/ic-recradrage.svg"></button>
-                <button id="cxt-rotate-btn"><img attr="Rotation" src="img/CropXtender/ic-rotation.svg"></button>
-                <button id="cxt-flip-x-btn"><img attr="Retournement vertical" src="img/CropXtender/ic-retournement-x.svg"></button>
-                <button id="cxt-flip-y-btn"><img attr="Retournement horizontal" src="img/CropXtender/ic-retournement-y.svg"></button>
-                <button id="cxt-zoom-btn"><img attr="Zoom" src="img/CropXtender/ic-zoom.svg"></button>
-                <button id="cxt-filter-btn"><img attr="Filtres" src="img/CropXtender/ic-filtre.svg"></button>
-                <button id="cxt-ia-btn"><img attr="IA génération" src="img/CropXtender/ic-generation.svg"></button>
-            </div>
-            <div id="cxt-actions">
-                <button id="cxt-close">Annuler</button>
-                <button id="cxt-save"><img attr="" src="img/CropXtender/ic-download.svg"></button>
-            </div>
-        </div>
-        <div id="cxt-builder">
-            <div id="cxt-bg">
-                <img id="cxt-img" src="">
-            </div>
-        </div>
-    </div> -->
+
     <script type="text/javascript" src="cropxtender.js"></script>
     <script>
         $('document').ready(function () {
-            const save = () => {
-                console.log("test");
+            const save = (image) => {
+                $("#result").attr("src", image);
             }
 
             $("#cropxtender-input").cropxtender({
@@ -66,30 +41,39 @@
                     "width": "41px",
                     "padding": "8px",
                 },
+                forceDisableCSS: true,
                 // modalStyle: {
                 //     "width": "700px",
                 //     "height": "800px",
                 // }
-                // saveFunction: save, // d
-                // closeFunction: , // d
-                // jqueryUiImport: false, // (default true | false) // d
+                // saveFunction: save,
+                // closeFunction: ,
+                // jqueryUiImport: false, // (default true | false)
                 // cssImport: false, // (default true | false) // d
-                // croppingAspectRatio: {x: 0.6, y: 1}, // (default none) d
+                // croppingAspectRatio: {x: 0.6, y: 1}, // (default none)
                 // resize: false, // (default true)
-                croppingButtonText: '<img attr="Recadrer" src="img/ic-recradrage.svg">', // d
-                rotatingButtonText: '<img attr="Rotation" src="img/ic-rotation.svg">', // d
-                flippingXButtonText: '<img attr="Retournement vertical" src="img/ic-retournement-x.svg">', // d
-                flippingYButtonText: '<img attr="Retournement horizontal" src="img/ic-retournement-y.svg">', // d
-                zoomingButtonText: '<img attr="Zoom" src="img/ic-zoom.svg">', // d
-                filteringButtonText: '<img attr="Filtres" src="img/ic-filtre.svg">', // d
-                iaGeneratingButtonText: '<img attr="IA génération" src="img/ic-generation.svg">', // d
-                // optionButtonStyle: , // d
-                // optionButtonContainerStyle: , // d
+                croppingButtonText: '<img attr="Recadrer" src="img/ic-recradrage.svg">',
+                rotatingButtonText: '<img attr="Rotation" src="img/ic-rotation.svg">',
+                flippingXButtonText: '<img attr="Retournement vertical" src="img/ic-retournement-x.svg">',
+                flippingYButtonText: '<img attr="Retournement horizontal" src="img/ic-retournement-y.svg">',
+                zoomingButtonText: '<img attr="Zoom" src="img/ic-zoom.svg">',
+                filteringButtonText: '<img attr="Filtres" src="img/ic-filtre.svg">',
+                // iaGeneratingButtonText: '<img attr="IA génération" src="img/ic-generation.svg">',
+                // optionButtonStyle: ,
+                // optionButtonContainerStyle: ,
+                defaultZoom: 100,
+                defaultFilter: {
+                    brightness: 200,
+                    contrast: 200,
+                    grayscale: 100,
+                    opacity: 50,
+                    saturate: 200,
+                    sepia: 200,
+                },
+                // optionSliderStyle: 
 
                 // cropping: false, // (default true)
                 // resize: false, // (default true)
-
-                // TODO
                 rotating: true, // (default false)
                 flippingX: true, // (default false)
                 flippingY: true,
