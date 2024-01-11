@@ -42,8 +42,12 @@
     <script type="text/javascript" src="cropxtender.js"></script>
     <script>
         $('document').ready(function () {
-            const save = () => {
-                console.log("test");
+            const save = (image) => {
+                $("body").append(`<img src="${image}" alt="">`);
+                const downloadLink = $("<a>").attr("href", image).attr("download", "cropxtender_exported_image.png");
+                $("body").append(downloadLink);
+                downloadLink[0].click();
+                downloadLink.remove();
             }
 
             $("#cropxtender-input").cropxtender({
@@ -65,11 +69,12 @@
                     "width": "41px",
                     "padding": "8px",
                 },
+                forceDisableCSS: true,
                 // modalStyle: {
                 //     "width": "700px",
                 //     "height": "800px",
                 // }
-                // saveFunction: save, // d
+                saveFunction: save, // d
                 // closeFunction: , // d
                 // jqueryUiImport: false, // (default true | false) // d
                 // cssImport: false, // (default true | false) // d
@@ -87,7 +92,15 @@
 
                 // cropping: false, // (default true)
                 // resize: false, // (default true)
-
+                defaultZoom: 100,
+                defaultFilter: {
+                    brightness: 200,
+                    contrast: 200,
+                    grayscale: 100,
+                    opacity: 50,
+                    saturate: 200,
+                    sepia: 200,
+                },
                 // TODO
                 rotating: true, // (default false)
                 flippingX: true, // (default false)
