@@ -69,6 +69,18 @@ $.fn.cropxtender = function(options) {
             $("#cxt-img").attr("data-height", rHeight);
         }
 
+        const updateFilter = (element, filterType, newValue) => {
+            const currentFilter = element.css("filter");
+            const regex = new RegExp(filterType + "\\([^)]*\\)");
+
+            if (currentFilter.match(regex)) {
+                const updatedFilter = currentFilter.replace(regex, filterType + "(" + newValue + ")");
+                element.css("filter", updatedFilter);
+            } else {
+                element.css("filter", (currentFilter === "none" ? "" : currentFilter + " ") + filterType + "(" + newValue + ")");
+            }
+        }
+
         fileInput.change(function() {
             if (fileInput[0].files[0].type === "image/jpeg" || fileInput[0].files[0].type === "image/png") {
                 const image = fileInput[0].files[0];
@@ -208,6 +220,16 @@ $.fn.cropxtender = function(options) {
                     left: 10px;
                     bottom: 10px;
                 }
+                #cxt-filter {
+                    display: flex;
+                    flex-direction: column;
+                    position: absolute;
+                    bottom: 2rem;
+                    left: 2rem;
+                    background-color: #eee;
+                    padding: 1rem;
+                    z-index: 100;
+                }
                 `;
 
                 if (options.saveButtonStyle) {
@@ -291,6 +313,7 @@ $.fn.cropxtender = function(options) {
                     $("#cxt-crop-btn").click(function() {
                         $("#cxt-preview-elm").css("display", "none");
                         $("#cxt-zoom-slider").remove();
+                        $("#cxt-filter").css("display", "none");
 
                         if (options.croppingAspectRatio) {
                             cropperOption(options.croppingAspectRatio);
@@ -309,6 +332,7 @@ $.fn.cropxtender = function(options) {
                     $("#cxt-rotate-btn").click(function() {
                         const elm = $('#cxt-preview-img');
                         $("#cxt-preview-elm").css("display", "none");
+                        $("#cxt-filter").css("display", "none");
                         $("#cxt-zoom-slider").remove();
 
                         const currentAngle = parseInt($(this).attr("data-rotate"));
@@ -328,6 +352,7 @@ $.fn.cropxtender = function(options) {
                     $("#cxt-flip-x-btn").click(function() {
                         const elm = $('#cxt-preview-img');
                         $("#cxt-preview-elm").css("display", "none");
+                        $("#cxt-filter").css("display", "none");
                         $("#cxt-zoom-slider").remove();
 
                         const flipX = elm.attr("data-flip-x") === "x";
@@ -345,6 +370,7 @@ $.fn.cropxtender = function(options) {
                     $("#cxt-flip-y-btn").click(function() {
                         const elm = $('#cxt-preview-img');
                         $("#cxt-preview-elm").css("display", "none");
+                        $("#cxt-filter").css("display", "none");
                         $("#cxt-zoom-slider").remove();
 
                         const flipY = elm.attr("data-flip-y") === "y";
@@ -368,10 +394,10 @@ $.fn.cropxtender = function(options) {
                             const elm = $('#cxt-preview-img');
                             const zoom = $(this).val() / 100;
                             $("#cxt-preview-elm").css("display", "none");
+                            $("#cxt-filter").css("display", "none");
                             const flipY = elm.attr("data-flip-y") === "y";
                             const flipX = elm.attr("data-flip-x") === "x";
                             const rotate= parseInt($("#cxt-rotate-btn").attr("data-rotate"));
-                            $("#cxt-preview-img").css("transform", "scale("+zoom+")");
                             elm.css("transform", `${rotate ? "rotate("+rotate+"deg)" : ""} scale(${flipX ? '-' + (zoom) : (zoom)}, ${flipY ? '-' + (zoom) : (zoom)})`);
                             elm.attr("data-zoom", zoom);
                         });
@@ -381,6 +407,47 @@ $.fn.cropxtender = function(options) {
                 }
 
                 if (options && options.filtering === true) {
+                    $("#cxt-filter-btn").click(function() {
+                        if ($("#cxt-filter").length == 0) {
+                            $("#cropxtender").append(`<div id="cxt-filter"></div>`);
+                        }
+                        $("#cxt-filter").css("display", "flex");
+                        if ($("#cxt-brightness-slider").length == 0) {
+                            $("#cxt-filter").append(`<input id="cxt-brightness-slider" type="range" min="0" max="200" value="100">`);
+                            $("#cxt-filter").append(`<input id="cxt-contrast-slider" type="range" min="0" max="200" value="100">`);
+                            $("#cxt-filter").append(`<input id="cxt-grayscale-slider" type="range" min="0" max="100" value="0">`);
+                            $("#cxt-filter").append(`<input id="cxt-opacity-slider" type="range" min="0" max="100" value="100">`);
+                            $("#cxt-filter").append(`<input id="cxt-saturate-slider" type="range" min="0" max="200" value="100">`);
+                            $("#cxt-filter").append(`<input id="cxt-sepia-slider" type="range" min="0" max="100" value="0">`);
+                        }
+
+                        $("#cxt-brightness-slider, #cxt-contrast-slider, #cxt-grayscale-slider, #cxt-opacity-slider, #cxt-saturate-slider, #cxt-sepia-slider").off();
+
+                        $("#cxt-brightness-slider").on("input", function() {
+                            updateFilter($('#cxt-preview-img'), "brightness", $(this).val() + "%");
+                            $('#cxt-preview-img').attr("data-brightness", $(this).val() + "%");
+                        });
+                        $("#cxt-contrast-slider").on("input", function() {
+                            updateFilter($('#cxt-preview-img'), "contrast", $(this).val() + "%");
+                            $('#cxt-preview-img').attr("data-contrast", $(this).val() + "%");
+                        });
+                        $("#cxt-grayscale-slider").on("input", function() {
+                            updateFilter($('#cxt-preview-img'), "grayscale", $(this).val() + "%");
+                            $('#cxt-preview-img').attr("data-grayscale", $(this).val() + "%");
+                        });
+                        $("#cxt-opacity-slider").on("input", function() {
+                            updateFilter($('#cxt-preview-img'), "opacity", $(this).val() + "%");
+                            $('#cxt-preview-img').attr("data-opacity", $(this).val() + "%");
+                        });
+                        $("#cxt-saturate-slider").on("input", function() {
+                            updateFilter($('#cxt-preview-img'), "saturate", $(this).val() + "%");
+                            $('#cxt-preview-img').attr("data-saturate", $(this).val() + "%");
+                        });
+                        $("#cxt-sepia-slider").on("input", function() {
+                            updateFilter($('#cxt-preview-img'), "sepia", $(this).val() + "%");
+                            $('#cxt-preview-img').attr("data-sepia", $(this).val() + "%");
+                        });
+                    });
                 } else {
                     $("#cxt-filter-btn").remove();
                 }
@@ -442,6 +509,17 @@ $.fn.cropxtender = function(options) {
                                         ctx.scale(flipX ? -zoom : zoom, flipY ? -zoom : zoom);
                                     }
 
+                                    if (options.filtering === true) {
+                                        const brightness    = $("#cxt-preview-img").attr("data-brightness");
+                                        const contrast      = $("#cxt-preview-img").attr("data-contrast");
+                                        const grayscale     = $("#cxt-preview-img").attr("data-grayscale");
+                                        const opacity       = $("#cxt-preview-img").attr("data-opacity");
+                                        const saturate      = $("#cxt-preview-img").attr("data-saturate");
+                                        const sepia         = $("#cxt-preview-img").attr("data-sepia");
+
+                                        ctx.filter = `${brightness ? "brightness("+brightness+")" : ""} ${contrast ? "contrast("+contrast+")" : ""} ${grayscale ? "grayscale("+grayscale+")" : ""} ${opacity ? "opacity("+opacity+")" : ""} ${saturate ? "saturate("+saturate+")" : ""} ${sepia ? "sepia("+sepia+")" : ""}`;
+                                    }
+
                                     ctx.drawImage(img, -(width / 2) - left, -(height / 2) - top);
 
                                     if (options.flippingX === true || options.flippingY === true) {
@@ -451,6 +529,10 @@ $.fn.cropxtender = function(options) {
                                             zoom = parseFloat($("#cxt-preview-img").attr("data-zoom"));
                                         }
                                         ctx.scale(flipX ? zoom : -zoom, flipY ? zoom : -zoom);
+                                    }
+
+                                    if (options.filtering === true) {
+                                        ctx.filter = "none";
                                     }
 
                                     ctx.rotate(-rotationAngle);
@@ -468,6 +550,16 @@ $.fn.cropxtender = function(options) {
                                         }
                                         ctx.scale(flipX ? -zoom : zoom, flipY ? -zoom : zoom);
                                     }
+                                    if (options.filtering === true) {
+                                        const brightness    = $("#cxt-preview-img").attr("data-brightness");
+                                        const contrast      = $("#cxt-preview-img").attr("data-contrast");
+                                        const grayscale     = $("#cxt-preview-img").attr("data-grayscale");
+                                        const opacity       = $("#cxt-preview-img").attr("data-opacity");
+                                        const saturate      = $("#cxt-preview-img").attr("data-saturate");
+                                        const sepia         = $("#cxt-preview-img").attr("data-sepia");
+
+                                        ctx.filter = `${brightness ? "brightness("+brightness+")" : ""} ${contrast ? "contrast("+contrast+")" : ""} ${grayscale ? "grayscale("+grayscale+")" : ""} ${opacity ? "opacity("+opacity+")" : ""} ${saturate ? "saturate("+saturate+")" : ""} ${sepia ? "sepia("+sepia+")" : ""}`;
+                                    }
                                     ctx.drawImage(img, -(width / 2) - left, -(height / 2) - top);
                                     if (options.flippingX === true || options.flippingY === true) {
                                         const flipX = $("#cxt-preview-img").attr("data-flip-x") === "x";
@@ -476,6 +568,9 @@ $.fn.cropxtender = function(options) {
                                             zoom = parseFloat($("#cxt-preview-img").attr("data-zoom"));
                                         }
                                         ctx.scale(flipX ? zoom : -zoom, flipY ? zoom : -zoom);
+                                    }
+                                    if (options.filtering === true) {
+                                        ctx.filter = "none";
                                     }
                                     ctx.translate(-x, -y);
                                 }
