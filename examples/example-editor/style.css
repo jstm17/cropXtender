@@ -17,6 +17,7 @@ body {
     color: var(--text-color);
     overflow: hidden;
     background-color: var(--bg-color);
+    font-family: 'Montserrat';
 }
 
 
@@ -161,6 +162,10 @@ button:hover {
     display: none;
 }
 
+#cxt-preview::-webkit-scrollbar {
+    display: none;
+}
+
 #cxt-options {
     display: flex;
     align-items: center;
@@ -195,7 +200,7 @@ button:hover {
     margin: auto;
 }
 
-#cxt-sliders input {
+#cxt-zoom {
     padding-bottom: 16px;
 }
 
@@ -222,4 +227,37 @@ button:hover {
     position: absolute;
     top: 100vh;
     left: 0;
+}
+
+#cxt-filter {
+    display: flex;
+    padding-bottom: 16px;
+    flex-wrap: wrap;
+    justify-content: space-around;
+}
+
+#cxt-filter-slider {
+    display: flex;
+    color: white;
+}
+
+.cxt-sliders-inputs {
+    display: flex;
+}
+
+.cxt-sliders-inputs input[id$="slider"] {
+    margin: 0;
+}
+
+.cxt-sliders-inputs input[id$="value"] {
+    width: 36px;
+    color: black;
+    border-radius: 5px;
+    margin-left: 5px;
+    padding-left: 4px;
+}
+
+.cxt-sliders-inputs input[id$="value"]::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
 }
