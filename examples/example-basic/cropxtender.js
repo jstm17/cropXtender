@@ -72,6 +72,7 @@ $.fn.cropxtender = function (options) {
         }
 
         const updateFilter = (element, filterType, newValue) => {
+            $("#cxt-"+filterType+"-value").val(parseInt(newValue.slice(0, -1)));
             const currentFilter = element.css("filter");
             const regex = new RegExp(filterType + "\\([^)]*\\)");
 
@@ -238,6 +239,9 @@ $.fn.cropxtender = function (options) {
                     padding: 1rem;
                     z-index: 100;
                 }
+                .cxt-filter-slider {
+                    display: flex;
+                }
                 `;
 
                 if (options.saveButtonStyle) {
@@ -395,18 +399,24 @@ $.fn.cropxtender = function (options) {
                 if (options && options.zooming === true) {
                     $("#cxt-zoom-btn").click(function () {
                         if ($("#cxt-zoom-slider").length == 0) {
-                            $("#cxt-sliders").append(`<input id="cxt-zoom-slider" type="range" min="1" max="200" value="100">`);
+                            $("#cxt-sliders").append(`
+                            <div class="cxt-zoom-slider">
+                                <label for="cxt-zoom-slider">Zoom</label>
+                                <input id="cxt-zoom-slider" type="range" min="1" max="200" value="100">
+                                <input id="cxt-zoom-value" type="number" value="100">
+                            </div>`);
                         }
-                        const zoom = $(this).val() / 100;
                         $("#cxt-preview-elm").css("display", "none");
                         $("#cxt-filter").css("display", "none");
                         $("#cxt-zoom-slider").off();
                         $("#cxt-zoom-slider").on("input", function () {
                             const elm = $('#cxt-preview-img');
+                            const zoom = $(this).val() / 100;
                             const flipY = elm.attr("data-flip-y") === "y";
                             const flipX = elm.attr("data-flip-x") === "x";
                             const rotate = parseInt($("#cxt-rotate-btn").attr("data-rotate"));
                             elm.css("transform", `${rotate ? "rotate("+rotate+"deg)" : ""} scale(${flipX ? '-' + (zoom) : (zoom)}, ${flipY ? '-' + (zoom) : (zoom)})`);
+                            $("#cxt-zoom-value").val($(this).val());
                             elm.attr("data-zoom", zoom);
                         });
                     });
@@ -423,12 +433,38 @@ $.fn.cropxtender = function (options) {
                         $("#cxt-zoom-slider").remove();
                         $("#cxt-filter").css("display", "flex");
                         if ($("#cxt-brightness-slider").length == 0) {
-                            $("#cxt-filter").append(`<input id="cxt-brightness-slider" type="range" min="0" max="200" value="100">`);
-                            $("#cxt-filter").append(`<input id="cxt-contrast-slider" type="range" min="0" max="200" value="100">`);
-                            $("#cxt-filter").append(`<input id="cxt-grayscale-slider" type="range" min="0" max="100" value="0">`);
-                            $("#cxt-filter").append(`<input id="cxt-opacity-slider" type="range" min="0" max="100" value="100">`);
-                            $("#cxt-filter").append(`<input id="cxt-saturate-slider" type="range" min="0" max="200" value="100">`);
-                            $("#cxt-filter").append(`<input id="cxt-sepia-slider" type="range" min="0" max="100" value="0">`);
+                            $("#cxt-filter").append(`
+                            <div class="cxt-filter-slider">
+                                <label for="cxt-brightness-slider">Luminosité</label>
+                                <input id="cxt-brightness-slider" type="range" min="0" max="200" value="100">
+                                <input id="cxt-brightness-value" type="number" value="100">
+                            </div>
+                            <div class="cxt-filter-slider">
+                                <label for="cxt-contrast-slider">Contraste</label>
+                                <input id="cxt-contrast-slider" type="range" min="0" max="200" value="100">
+                                <input id="cxt-contrast-value" type="number" value="100">
+                            </div>
+                            <div class="cxt-filter-slider">
+                            <label for="cxt-grayscale-slider">Niveaux de gris</label>
+                                <input id="cxt-grayscale-slider" type="range" min="0" max="100" value="0">
+                                <input id="cxt-grayscale-value" type="number" value="0">
+                            </div>
+                            <div class="cxt-filter-slider">
+                            <label for="cxt-opacity-slider">Opacité</label>
+                                <input id="cxt-opacity-slider" type="range" min="0" max="100" value="100">
+                                <input id="cxt-opacity-value" type="number" value="100">
+                            </div>
+                            <div class="cxt-filter-slider">
+                            <label for="cxt-saturate-slider">Saturation</label>
+                                <input id="cxt-saturate-slider" type="range" min="0" max="200" value="100">
+                                <input id="cxt-saturate-value" type="number" value="100">
+                            </div>
+                            <div class="cxt-filter-slider">
+                            <label for="cxt-sepia-slider">Sépia</label>
+                                <input id="cxt-sepia-slider" type="range" min="0" max="100" value="0">
+                                <input id="cxt-sepia-value" type="number" value="0">
+                            </div>
+                            `);
                         }
 
                         $("#cxt-brightness-slider, #cxt-contrast-slider, #cxt-grayscale-slider, #cxt-opacity-slider, #cxt-saturate-slider, #cxt-sepia-slider").off();

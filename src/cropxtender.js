@@ -423,12 +423,26 @@ $.fn.cropxtender = function (options) {
                         $("#cxt-zoom-slider").remove();
                         $("#cxt-filter").css("display", "flex");
                         if ($("#cxt-brightness-slider").length == 0) {
-                            $("#cxt-filter").append(`<input id="cxt-brightness-slider" type="range" min="0" max="200" value="100">`);
-                            $("#cxt-filter").append(`<input id="cxt-contrast-slider" type="range" min="0" max="200" value="100">`);
-                            $("#cxt-filter").append(`<input id="cxt-grayscale-slider" type="range" min="0" max="100" value="0">`);
-                            $("#cxt-filter").append(`<input id="cxt-opacity-slider" type="range" min="0" max="100" value="100">`);
-                            $("#cxt-filter").append(`<input id="cxt-saturate-slider" type="range" min="0" max="200" value="100">`);
-                            $("#cxt-filter").append(`<input id="cxt-sepia-slider" type="range" min="0" max="100" value="0">`);
+                            $("#cxt-filter").append(`
+                            <div>
+                                <input id="cxt-brightness-slider" type="range" min="0" max="200" value="100">
+                            </div>`);
+                            $("#cxt-filter").append(`
+                            <div>
+                                <input id="cxt-contrast-slider" type="range" min="0" max="200" value="100">
+                            </div>`);
+                            $("#cxt-filter").append(`
+                            <div>
+                                <input id="cxt-grayscale-slider" type="range" min="0" max="100" value="0">
+                            </div>`);
+                            $("#cxt-filter").append(`
+                            <div>
+                                <input id="cxt-opacity-slider" type="range" min="0" max="100" value="100">
+                            </div>`);
+                            $("#cxt-filter").append(`
+                            <div><input id="cxt-saturate-slider" type="range" min="0" max="200" value="100">`);
+                            $("#cxt-filter").append(`
+                            <div><input id="cxt-sepia-slider" type="range" min="0" max="100" value="0">`);
                         }
 
                         $("#cxt-brightness-slider, #cxt-contrast-slider, #cxt-grayscale-slider, #cxt-opacity-slider, #cxt-saturate-slider, #cxt-sepia-slider").off();
