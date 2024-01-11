@@ -2,10 +2,6 @@
     box-sizing: border-box;
 }
 
-body {
-    overflow: hidden;
-}
-
 button {
     border: none;
     background: none;
@@ -143,4 +139,15 @@ button img {
     position: absolute;
     top: 100vh;
     left: 0;
+}
+
+#cxt-filter {
+    display: flex;
+    flex-direction: column;
+    position: absolute;
+    bottom: 2rem;
+    left: 2rem;
+    background-color: #eee;
+    padding: 1rem;
+    z-index: 100;
 }

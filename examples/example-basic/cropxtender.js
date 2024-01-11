@@ -88,24 +88,24 @@ $.fn.cropxtender = function (options) {
                 const image = fileInput[0].files[0];
 
                 let bodyHTML = `    
-                    <div id="cropxtender" class="test">
+                    <div id="cropxtender">
                         <div id="cxt-backdrop"></div>
                         <div id="cxt-modal">
                             <div id="cxt-preview">
                                 <div id="cxt-preview-elm"></div>
                             </div>
                             <div id="cxt-actions">
-                            <div id="cxt-sliders"></div>
+                                <div id="cxt-sliders"></div>
                                 <div id="cxt-buttons">
                                     <button id="cxt-close">Annuler</button>
                                     <div id="cxt-options">
-                                    <button id="cxt-crop-btn">Crop</button>
-                                    <button id="cxt-rotate-btn">Rotate</button>
-                                    <button id="cxt-flip-x-btn">Flip X</button>
-                                    <button id="cxt-flip-y-btn">Flip Y</button>
-                                    <button id="cxt-zoom-btn">Zoom</button>
-                                    <button id="cxt-filter-btn">Filter</button>
-                                    <button id="cxt-ia-btn">IA</button>
+                                        <button id="cxt-crop-btn">Crop</button>
+                                        <button id="cxt-rotate-btn">Rotate</button>
+                                        <button id="cxt-flip-x-btn">Flip X</button>
+                                        <button id="cxt-flip-y-btn">Flip Y</button>
+                                        <button id="cxt-zoom-btn">Zoom</button>
+                                        <button id="cxt-filter-btn">Filter</button>
+                                        <button id="cxt-ia-btn">IA</button>
                                     </div>
                                     <button id="cxt-save">Valider</button>
                                 </div>
@@ -397,12 +397,12 @@ $.fn.cropxtender = function (options) {
                         if ($("#cxt-zoom-slider").length == 0) {
                             $("#cxt-sliders").append(`<input id="cxt-zoom-slider" type="range" min="1" max="200" value="100">`);
                         }
+                        const zoom = $(this).val() / 100;
+                        $("#cxt-preview-elm").css("display", "none");
+                        $("#cxt-filter").css("display", "none");
                         $("#cxt-zoom-slider").off();
                         $("#cxt-zoom-slider").on("input", function () {
                             const elm = $('#cxt-preview-img');
-                            const zoom = $(this).val() / 100;
-                            $("#cxt-preview-elm").css("display", "none");
-                            $("#cxt-filter").css("display", "none");
                             const flipY = elm.attr("data-flip-y") === "y";
                             const flipX = elm.attr("data-flip-x") === "x";
                             const rotate = parseInt($("#cxt-rotate-btn").attr("data-rotate"));
@@ -417,8 +417,10 @@ $.fn.cropxtender = function (options) {
                 if (options && options.filtering === true) {
                     $("#cxt-filter-btn").click(function () {
                         if ($("#cxt-filter").length == 0) {
-                            $("#cropxtender").append(`<div id="cxt-filter"></div>`);
+                            $("#cxt-sliders").append(`<div id="cxt-filter"></div>`);
                         }
+                        $("#cxt-preview-elm").css("display", "none");
+                        $("#cxt-zoom-slider").remove();
                         $("#cxt-filter").css("display", "flex");
                         if ($("#cxt-brightness-slider").length == 0) {
                             $("#cxt-filter").append(`<input id="cxt-brightness-slider" type="range" min="0" max="200" value="100">`);
