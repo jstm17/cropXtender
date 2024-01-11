@@ -1,5 +1,5 @@
-$.fn.cropxtender = function(options) {
-    return this.each(function() {
+$.fn.cropxtender = function (options) {
+    return this.each(function () {
         const fileInput = $(this);
         console.log(options);
 
@@ -12,12 +12,14 @@ $.fn.cropxtender = function(options) {
             while (n--) {
                 u8arr[n] = bstr.charCodeAt(n);
             }
-            return new Blob([u8arr], { type: mime });
+            return new Blob([u8arr], {
+                type: mime
+            });
         }
 
         const objectToCssString = (styles) => {
             let cssString = "{ ";
-            $.each(styles, function(property, value) {
+            $.each(styles, function (property, value) {
                 cssString += `${property}: ${value}; `;
             });
             cssString += "}";
@@ -27,8 +29,8 @@ $.fn.cropxtender = function(options) {
         const cropperOption = (croppingAspectRatio = false) => {
             const elm = $("#cxt-preview-elm");
             if (croppingAspectRatio) {
-                elm.width( elm.width() * croppingAspectRatio.x);
-                elm.height( elm.height() * croppingAspectRatio.y);
+                elm.width(elm.width() * croppingAspectRatio.x);
+                elm.height(elm.height() * croppingAspectRatio.y);
             }
             if (elm.resizable("instance")) {
                 elm.resizable("destroy");
@@ -81,29 +83,32 @@ $.fn.cropxtender = function(options) {
             }
         }
 
-        fileInput.change(function() {
+        fileInput.change(function () {
             if (fileInput[0].files[0].type === "image/jpeg" || fileInput[0].files[0].type === "image/png") {
                 const image = fileInput[0].files[0];
 
                 let bodyHTML = `    
-                    <div id="cropxtender">
+                    <div id="cropxtender" class="test">
                         <div id="cxt-backdrop"></div>
                         <div id="cxt-modal">
                             <div id="cxt-preview">
                                 <div id="cxt-preview-elm"></div>
                             </div>
-                            <div id="cxt-options">
-                                <button id="cxt-crop-btn">Crop</button>
-                                <button id="cxt-rotate-btn">Rotate</button>
-                                <button id="cxt-flip-x-btn">Flip X</button>
-                                <button id="cxt-flip-y-btn">Flip Y</button>
-                                <button id="cxt-zoom-btn">Zoom</button>
-                                <button id="cxt-filter-btn">Filter</button>
-                                <button id="cxt-ia-btn">IA</button>
-                            </div>
                             <div id="cxt-actions">
-                                <button id="cxt-close">Annuler</button>
-                                <button id="cxt-save">Valider</button>
+                            <div id="cxt-sliders"></div>
+                                <div id="cxt-buttons">
+                                    <button id="cxt-close">Annuler</button>
+                                    <div id="cxt-options">
+                                    <button id="cxt-crop-btn">Crop</button>
+                                    <button id="cxt-rotate-btn">Rotate</button>
+                                    <button id="cxt-flip-x-btn">Flip X</button>
+                                    <button id="cxt-flip-y-btn">Flip Y</button>
+                                    <button id="cxt-zoom-btn">Zoom</button>
+                                    <button id="cxt-filter-btn">Filter</button>
+                                    <button id="cxt-ia-btn">IA</button>
+                                    </div>
+                                    <button id="cxt-save">Valider</button>
+                                </div>
                             </div>
                         </div>
                         <img id="cxt-img" src="">
@@ -121,7 +126,7 @@ $.fn.cropxtender = function(options) {
                 }
 
                 $("body").append(bodyHTML);
-                
+
 
                 if (options && options.saveButtonText && typeof options.saveButtonText === "string") {
                     $("#cxt-save").html(options.saveButtonText);
@@ -135,8 +140,11 @@ $.fn.cropxtender = function(options) {
                 if (options && options.rotatingButtonText && typeof options.rotatingButtonText === "string") {
                     $("#cxt-rotate-btn").html(options.rotatingButtonText);
                 }
-                if (options && options.flippingButtonText && typeof options.flippingButtonText === "string") {
-                    $("#cxt-flip-btn").html(options.flippingButtonText);
+                if (options && options.flippingXButtonText && typeof options.flippingXButtonText === "string") {
+                    $("#cxt-flip-x-btn").html(options.flippingXButtonText);
+                }
+                if (options && options.flippingYButtonText && typeof options.flippingYButtonText === "string") {
+                    $("#cxt-flip-y-btn").html(options.flippingYButtonText);
                 }
                 if (options && options.zoomingButtonText && typeof options.zoomingButtonText === "string") {
                     $("#cxt-zoom-btn").html(options.zoomingButtonText);
@@ -261,17 +269,17 @@ $.fn.cropxtender = function(options) {
                     rules += "#cxt-options " + css;
                 }
 
-                if ($("style").length > 0) {
-                    if (!$("style").text().includes(rules)) {
-                        $("style").append(rules);
-                    }
-                } else {
-                    $("head").append(`<style>${rules}</style>`);
-                }
+                // if ($("style").length > 0) {
+                //     if (!$("style").text().includes(rules)) {
+                //         $("style").append(rules);
+                //     }
+                // } else {
+                //     $("head").append(`<style>${rules}</style>`);
+                // }
 
                 const reader = new FileReader();
 
-                reader.onload = function(e){
+                reader.onload = function (e) {
                     $("#cxt-img").attr("src", e.target.result);
                     $("#cxt-preview").prepend(`<img id="cxt-preview-img" src="${e.target.result}" />`);
                 }
@@ -288,29 +296,29 @@ $.fn.cropxtender = function(options) {
                             height: $("#cxt-preview").height() - 7,
                         });
                     }, (500));
-                    
+
                 }, 500);
 
                 $("#cropxtender").css("overflow", "hidden");
 
-                $("#cxt-backdrop").click(function() {
+                $("#cxt-backdrop").click(function () {
                     $("#cropxtender").remove();
                     fileInput.val("");
                 });
- 
+
                 if (options && options.closeFunction && typeof options.closeFunction === "function") {
-                    $("#cxt-close").click(function() {
+                    $("#cxt-close").click(function () {
                         options.closeFunction.call();
                     });
                 } else {
-                    $("#cxt-close").click(function() {
+                    $("#cxt-close").click(function () {
                         $("#cropxtender").remove();
                         fileInput.val("");
                     });
                 }
 
                 if (!(options && options.cropping === false)) {
-                    $("#cxt-crop-btn").click(function() {
+                    $("#cxt-crop-btn").click(function () {
                         $("#cxt-preview-elm").css("display", "none");
                         $("#cxt-zoom-slider").remove();
                         $("#cxt-filter").css("display", "none");
@@ -329,7 +337,7 @@ $.fn.cropxtender = function(options) {
 
                 if (options && options.rotating === true) {
                     $("#cxt-rotate-btn").attr("data-rotate", 0);
-                    $("#cxt-rotate-btn").click(function() {
+                    $("#cxt-rotate-btn").click(function () {
                         const elm = $('#cxt-preview-img');
                         $("#cxt-preview-elm").css("display", "none");
                         $("#cxt-filter").css("display", "none");
@@ -338,7 +346,7 @@ $.fn.cropxtender = function(options) {
                         const currentAngle = parseInt($(this).attr("data-rotate"));
                         const flipX = elm.attr("data-flip-x") === "x";
                         const flipY = elm.attr("data-flip-y") === "y";
-                        const zoom  = elm.attr("data-zoom") ? parseFloat(elm.attr("data-zoom")) : 1;
+                        const zoom = elm.attr("data-zoom") ? parseFloat(elm.attr("data-zoom")) : 1;
                         elm.css("transform", `rotate(${currentAngle + 90}deg) scale(${flipX ? "-" + zoom : zoom}, ${flipY ? "-" + zoom : zoom})`);
                         const rotationAngle = ((currentAngle + 90) % 360) * Math.PI / 180;
                         elm.attr("data-rotate", rotationAngle);
@@ -349,7 +357,7 @@ $.fn.cropxtender = function(options) {
                 }
 
                 if (options && options.flippingX === true) {
-                    $("#cxt-flip-x-btn").click(function() {
+                    $("#cxt-flip-x-btn").click(function () {
                         const elm = $('#cxt-preview-img');
                         $("#cxt-preview-elm").css("display", "none");
                         $("#cxt-filter").css("display", "none");
@@ -357,17 +365,17 @@ $.fn.cropxtender = function(options) {
 
                         const flipX = elm.attr("data-flip-x") === "x";
                         const flipY = elm.attr("data-flip-y") === "y";
-                        const rotate= parseInt($("#cxt-rotate-btn").attr("data-rotate"));
-                        const zoom  = elm.attr("data-zoom") ? parseFloat(elm.attr("data-zoom")) : 1;
+                        const rotate = parseInt($("#cxt-rotate-btn").attr("data-rotate"));
+                        const zoom = elm.attr("data-zoom") ? parseFloat(elm.attr("data-zoom")) : 1;
                         elm.css("transform", `${rotate ? "rotate("+rotate+"deg)" : ""} scale(${flipX ? zoom : '-' + zoom}, ${flipY ? '-' + zoom : zoom})`);
                         elm.attr("data-flip-x", flipX ? "" : "x");
                     });
                 } else {
                     $("#cxt-flip-x-btn").remove();
                 }
-                
+
                 if (options && options.flippingY === true) {
-                    $("#cxt-flip-y-btn").click(function() {
+                    $("#cxt-flip-y-btn").click(function () {
                         const elm = $('#cxt-preview-img');
                         $("#cxt-preview-elm").css("display", "none");
                         $("#cxt-filter").css("display", "none");
@@ -375,8 +383,8 @@ $.fn.cropxtender = function(options) {
 
                         const flipY = elm.attr("data-flip-y") === "y";
                         const flipX = elm.attr("data-flip-x") === "x";
-                        const rotate= parseInt($("#cxt-rotate-btn").attr("data-rotate"));
-                        const zoom  = elm.attr("data-zoom") ? parseFloat(elm.attr("data-zoom")) : 1;
+                        const rotate = parseInt($("#cxt-rotate-btn").attr("data-rotate"));
+                        const zoom = elm.attr("data-zoom") ? parseFloat(elm.attr("data-zoom")) : 1;
                         elm.css("transform", `${rotate ? "rotate("+rotate+"deg)" : ""} scale(${flipX ? '-' + zoom : zoom}, ${flipY ? zoom : '-' + zoom})`);
                         elm.attr("data-flip-y", flipY ? "" : "y");
                     });
@@ -385,19 +393,19 @@ $.fn.cropxtender = function(options) {
                 }
 
                 if (options && options.zooming === true) {
-                    $("#cxt-zoom-btn").click(function() {
+                    $("#cxt-zoom-btn").click(function () {
                         if ($("#cxt-zoom-slider").length == 0) {
-                            $("#cxt-preview").append(`<input id="cxt-zoom-slider" type="range" min="1" max="200" value="100">`);
+                            $("#cxt-sliders").append(`<input id="cxt-zoom-slider" type="range" min="1" max="200" value="100">`);
                         }
                         $("#cxt-zoom-slider").off();
-                        $("#cxt-zoom-slider").on("input", function() {
+                        $("#cxt-zoom-slider").on("input", function () {
                             const elm = $('#cxt-preview-img');
                             const zoom = $(this).val() / 100;
                             $("#cxt-preview-elm").css("display", "none");
                             $("#cxt-filter").css("display", "none");
                             const flipY = elm.attr("data-flip-y") === "y";
                             const flipX = elm.attr("data-flip-x") === "x";
-                            const rotate= parseInt($("#cxt-rotate-btn").attr("data-rotate"));
+                            const rotate = parseInt($("#cxt-rotate-btn").attr("data-rotate"));
                             elm.css("transform", `${rotate ? "rotate("+rotate+"deg)" : ""} scale(${flipX ? '-' + (zoom) : (zoom)}, ${flipY ? '-' + (zoom) : (zoom)})`);
                             elm.attr("data-zoom", zoom);
                         });
@@ -407,7 +415,7 @@ $.fn.cropxtender = function(options) {
                 }
 
                 if (options && options.filtering === true) {
-                    $("#cxt-filter-btn").click(function() {
+                    $("#cxt-filter-btn").click(function () {
                         if ($("#cxt-filter").length == 0) {
                             $("#cropxtender").append(`<div id="cxt-filter"></div>`);
                         }
@@ -423,27 +431,27 @@ $.fn.cropxtender = function(options) {
 
                         $("#cxt-brightness-slider, #cxt-contrast-slider, #cxt-grayscale-slider, #cxt-opacity-slider, #cxt-saturate-slider, #cxt-sepia-slider").off();
 
-                        $("#cxt-brightness-slider").on("input", function() {
+                        $("#cxt-brightness-slider").on("input", function () {
                             updateFilter($('#cxt-preview-img'), "brightness", $(this).val() + "%");
                             $('#cxt-preview-img').attr("data-brightness", $(this).val() + "%");
                         });
-                        $("#cxt-contrast-slider").on("input", function() {
+                        $("#cxt-contrast-slider").on("input", function () {
                             updateFilter($('#cxt-preview-img'), "contrast", $(this).val() + "%");
                             $('#cxt-preview-img').attr("data-contrast", $(this).val() + "%");
                         });
-                        $("#cxt-grayscale-slider").on("input", function() {
+                        $("#cxt-grayscale-slider").on("input", function () {
                             updateFilter($('#cxt-preview-img'), "grayscale", $(this).val() + "%");
                             $('#cxt-preview-img').attr("data-grayscale", $(this).val() + "%");
                         });
-                        $("#cxt-opacity-slider").on("input", function() {
+                        $("#cxt-opacity-slider").on("input", function () {
                             updateFilter($('#cxt-preview-img'), "opacity", $(this).val() + "%");
                             $('#cxt-preview-img').attr("data-opacity", $(this).val() + "%");
                         });
-                        $("#cxt-saturate-slider").on("input", function() {
+                        $("#cxt-saturate-slider").on("input", function () {
                             updateFilter($('#cxt-preview-img'), "saturate", $(this).val() + "%");
                             $('#cxt-preview-img').attr("data-saturate", $(this).val() + "%");
                         });
-                        $("#cxt-sepia-slider").on("input", function() {
+                        $("#cxt-sepia-slider").on("input", function () {
                             updateFilter($('#cxt-preview-img'), "sepia", $(this).val() + "%");
                             $('#cxt-preview-img').attr("data-sepia", $(this).val() + "%");
                         });
@@ -452,17 +460,16 @@ $.fn.cropxtender = function(options) {
                     $("#cxt-filter-btn").remove();
                 }
 
-                if (options && options.iaGenerating === true) {
-                } else {
+                if (options && options.iaGenerating === true) {} else {
                     $("#cxt-ia-btn").remove();
                 }
 
                 if (options && options.saveFunction && typeof options.saveFunction === 'function') {
-                    $("#cxt-save").click(function() {
+                    $("#cxt-save").click(function () {
                         options.saveFunction.call();
                     });
                 } else {
-                    $("#cxt-save").click(function() {
+                    $("#cxt-save").click(function () {
                         const left = $("#cxt-img").attr("data-left");
                         const top = $("#cxt-img").attr("data-top");
                         const width = $("#cxt-img").attr("data-width");
@@ -470,7 +477,7 @@ $.fn.cropxtender = function(options) {
 
                         const canvas = $("<canvas>").attr("width", width).attr("height", height);
                         const ctx = canvas[0].getContext('2d');
-            
+
                         const reader = new FileReader();
 
                         reader.onload = function (e) {
@@ -510,12 +517,12 @@ $.fn.cropxtender = function(options) {
                                     }
 
                                     if (options.filtering === true) {
-                                        const brightness    = $("#cxt-preview-img").attr("data-brightness");
-                                        const contrast      = $("#cxt-preview-img").attr("data-contrast");
-                                        const grayscale     = $("#cxt-preview-img").attr("data-grayscale");
-                                        const opacity       = $("#cxt-preview-img").attr("data-opacity");
-                                        const saturate      = $("#cxt-preview-img").attr("data-saturate");
-                                        const sepia         = $("#cxt-preview-img").attr("data-sepia");
+                                        const brightness = $("#cxt-preview-img").attr("data-brightness");
+                                        const contrast = $("#cxt-preview-img").attr("data-contrast");
+                                        const grayscale = $("#cxt-preview-img").attr("data-grayscale");
+                                        const opacity = $("#cxt-preview-img").attr("data-opacity");
+                                        const saturate = $("#cxt-preview-img").attr("data-saturate");
+                                        const sepia = $("#cxt-preview-img").attr("data-sepia");
 
                                         ctx.filter = `${brightness ? "brightness("+brightness+")" : ""} ${contrast ? "contrast("+contrast+")" : ""} ${grayscale ? "grayscale("+grayscale+")" : ""} ${opacity ? "opacity("+opacity+")" : ""} ${saturate ? "saturate("+saturate+")" : ""} ${sepia ? "sepia("+sepia+")" : ""}`;
                                     }
@@ -551,12 +558,12 @@ $.fn.cropxtender = function(options) {
                                         ctx.scale(flipX ? -zoom : zoom, flipY ? -zoom : zoom);
                                     }
                                     if (options.filtering === true) {
-                                        const brightness    = $("#cxt-preview-img").attr("data-brightness");
-                                        const contrast      = $("#cxt-preview-img").attr("data-contrast");
-                                        const grayscale     = $("#cxt-preview-img").attr("data-grayscale");
-                                        const opacity       = $("#cxt-preview-img").attr("data-opacity");
-                                        const saturate      = $("#cxt-preview-img").attr("data-saturate");
-                                        const sepia         = $("#cxt-preview-img").attr("data-sepia");
+                                        const brightness = $("#cxt-preview-img").attr("data-brightness");
+                                        const contrast = $("#cxt-preview-img").attr("data-contrast");
+                                        const grayscale = $("#cxt-preview-img").attr("data-grayscale");
+                                        const opacity = $("#cxt-preview-img").attr("data-opacity");
+                                        const saturate = $("#cxt-preview-img").attr("data-saturate");
+                                        const sepia = $("#cxt-preview-img").attr("data-sepia");
 
                                         ctx.filter = `${brightness ? "brightness("+brightness+")" : ""} ${contrast ? "contrast("+contrast+")" : ""} ${grayscale ? "grayscale("+grayscale+")" : ""} ${opacity ? "opacity("+opacity+")" : ""} ${saturate ? "saturate("+saturate+")" : ""} ${sepia ? "sepia("+sepia+")" : ""}`;
                                     }
@@ -579,7 +586,9 @@ $.fn.cropxtender = function(options) {
                                 $("#result").attr("src", dataUrl);
                                 const dataTransfer = new DataTransfer();
                                 const blob = dataURLtoBlob(dataUrl);
-                                const file = new File([blob], 'image.png', { type: 'image/png' });
+                                const file = new File([blob], 'image.png', {
+                                    type: 'image/png'
+                                });
                                 dataTransfer.items.add(file);
                                 fileInput[0].files = dataTransfer.files;
                                 $("#cropxtender").remove();
