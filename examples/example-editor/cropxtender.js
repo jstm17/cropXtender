@@ -1,7 +1,6 @@
 $.fn.cropxtender = function (options) {
     return this.each(function () {
         const fileInput = $(this);
-        console.log(options);
   
         const dataURLtoBlob = (dataUrl) => {
             const arr = dataUrl.split(',');
