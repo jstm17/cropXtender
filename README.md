@@ -49,7 +49,6 @@ $("#cropxtender-input").cropxtender({
 - **saveButtonStyle**: Styles for the save button.
 - **closeButtonStyle**: Styles for the close button.
 - **modalStyle**: Styles for the modal.
-- **resize**: Enable or disable resizing.
 - **cropping**: Enable or disable cropping.
 - **croppingAspectRatio**: Enable or disable aspect ratio for cropping.
 - **croppingButtonText**: Text for the cropping button.
