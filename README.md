@@ -87,6 +87,9 @@ $("#cropxtender-input").cropxtender({
     rotatingButtonText: "Rotate 90deg"
 });
 ```
+
+More examples are available in examples folder
+
 ### Contributing
 
 Feel free to contribute to this project. Submit issues for bug reports or feature requests, and create pull requests for improvements.
