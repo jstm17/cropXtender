@@ -43,7 +43,6 @@
     <script>
         $('document').ready(function () {
             const save = (image) => {
-                $("body").append(`<img src="${image}" alt="">`);
                 const downloadLink = $("<a>").attr("href", image).attr("download", "cropxtender_exported_image.png");
                 $("body").append(downloadLink);
                 downloadLink[0].click();
@@ -70,28 +69,14 @@
                     "padding": "8px",
                 },
                 forceDisableCSS: true,
-                // modalStyle: {
-                //     "width": "700px",
-                //     "height": "800px",
-                // }
-                saveFunction: save, // d
-                // closeFunction: , // d
-                // jqueryUiImport: false, // (default true | false) // d
-                // cssImport: false, // (default true | false) // d
-                // croppingAspectRatio: {x: 0.6, y: 1}, // (default none) d
-                // resize: false, // (default true)
-                croppingButtonText: '<img attr="Recadrer" src="img/ic-recradrage.svg">', // d
-                rotatingButtonText: '<img attr="Rotation" src="img/ic-rotation.svg">', // d
-                flippingXButtonText: '<img attr="Retournement vertical" src="img/ic-retournement-x.svg">', // d
-                flippingYButtonText: '<img attr="Retournement horizontal" src="img/ic-retournement-y.svg">', // d
-                zoomingButtonText: '<img attr="Zoom" src="img/ic-zoom.svg">', // d
-                filteringButtonText: '<img attr="Filtres" src="img/ic-filtre.svg">', // d
-                iaGeneratingButtonText: '<img attr="IA génération" src="img/ic-generation.svg">', // d
-                // optionButtonStyle: , // d
-                // optionButtonContainerStyle: , // d
-
-                // cropping: false, // (default true)
-                // resize: false, // (default true)
+                saveFunction: save,
+                croppingButtonText: '<img attr="Recadrer" src="img/ic-recradrage.svg">',
+                rotatingButtonText: '<img attr="Rotation" src="img/ic-rotation.svg">',
+                flippingXButtonText: '<img attr="Retournement vertical" src="img/ic-retournement-x.svg">',
+                flippingYButtonText: '<img attr="Retournement horizontal" src="img/ic-retournement-y.svg">',
+                zoomingButtonText: '<img attr="Zoom" src="img/ic-zoom.svg">',
+                filteringButtonText: '<img attr="Filtres" src="img/ic-filtre.svg">',
+                iaGeneratingButtonText: '<img attr="IA génération" src="img/ic-generation.svg">',
                 defaultZoom: 100,
                 defaultFilter: {
                     brightness: 200,
@@ -101,13 +86,11 @@
                     saturate: 200,
                     sepia: 200,
                 },
-                // TODO
-                rotating: true, // (default false)
-                flippingX: true, // (default false)
+                rotating: true,
+                flippingX: true,
                 flippingY: true,
-                zooming: true, // (default false)
-                filtering: true, // (default false)
-                // iaGenerating: , // (default false)
+                zooming: true,
+                filtering: true,
             });
         });
     </script>
