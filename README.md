@@ -25,8 +25,7 @@ Include the jQuery library and CropXtender plugin files in your project:
 <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
 
 <!-- Include CropXtender plugin -->
-<script src="path/to/jquery.cropxtender.js"></script>
-<link rel="stylesheet" href="path/to/jquery.cropxtender.css">
+<script src="path/to/cropxtender.js"></script>
 ```
 
 ### Usage
@@ -39,8 +38,6 @@ $("#cropxtender-input").cropxtender({
 
 ### Configuration Options
 
-- maxSize: Set the maximum size for cropping.
-- minSize: Set the minimum size for cropping.
 - saveButtonText: Text for the save button.
 - closeButtonText: Text for the close button.
 - saveButtonStyle: Styles for the save button.
@@ -57,8 +54,6 @@ $("#cropxtender-input").cropxtender({
 
 ```javascript
 $("#cropxtender-input").cropxtender({
-    maxSize: { width: 800, height: 600 },
-    minSize: { width: 200, height: 150 },
     croppingAspectRatio: { x: 1, y: 1 },
     resize: true,
     cropping: true,
