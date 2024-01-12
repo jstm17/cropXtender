@@ -50,7 +50,6 @@ $("#cropxtender-input").cropxtender({
 - **closeButtonStyle**: Styles for the close button.
 - **modalStyle**: Styles for the modal.
 - **resize**: Enable or disable resizing.
-- **resizeButtonText**: Text for the resize button.
 - **cropping**: Enable or disable cropping.
 - **croppingAspectRatio**: Enable or disable aspect ratio for cropping.
 - **croppingButtonText**: Text for the cropping button.
@@ -80,16 +79,12 @@ $("#cropxtender-input").cropxtender({
 ```javascript
 $("#cropxtender-input").cropxtender({
     saveFunction: function (image) { console.log(image); },
-    saveButtonText: "",
-    closeButtonText: "",
-    saveButtonStyle
-    closeButtonStyle
-    modalStyle
-    resizeButtonText
-    croppingAspectRatio
-    croppingButtonText
-    rotating
-    rotatingButtonText
+    saveButtonText: "Yes",
+    closeButtonText: "No",
+    croppingAspectRatio: {x: 1, y: 1},
+    croppingButtonText: "Crop & resize",
+    rotating: true,
+    rotatingButtonText: "Rotate 90deg"
 });
 ```
 ### Contributing
