@@ -251,11 +251,6 @@ $.fn.cropxtender = function (options) {
                     rules += "#cxt-modal " + css;
                 }
   
-                if (options.modalStyle) {
-                    const css = objectToCssString(options.modalStyle);
-                    rules += "#cxt-modal " + css;
-                }
-  
                 if (options.optionButtonStyle) {
                     const css = objectToCssString(options.optionButtonStyle);
                     rules += "#cxt-options button" + css;
