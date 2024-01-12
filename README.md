@@ -2,6 +2,8 @@
 
 CropXtender is a jQuery plugin for extending and customizing image cropping functionality. It allows users to crop images with additional features such as resizing, rotating, flipping, zooming, and more.
 
+Visit the [CropXtender Documentation](https://wintxer.github.io/cropXtender-doc/docs.html) for detailed information on installation, configuration, and usage.
+
 ## Features
 
 - Image cropping with customizable options.
@@ -10,6 +12,11 @@ CropXtender is a jQuery plugin for extending and customizing image cropping func
 - Easy integration with jQuery.
 - Responsive design for various devices.
 - Customizable plugin settings to fit your specific project requirements.
+
+## Demo
+
+Explore the [CropXtender Demo](https://wintxer.github.io/cropXtender-doc/editor.html) to see the plugin in action.
+
 
 ## Getting Started
 
