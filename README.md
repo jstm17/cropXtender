@@ -2,7 +2,7 @@
 
 CropXtender is a jQuery package for extending and customizing image cropping functionality. It allows users to crop images with additional features such as resizing, rotating, flipping, zooming, and more.
 
-Visit the [CropXtender Documentation](https://wintxer.github.io/cropXtender-doc/docs.html) for detailed information on installation, configuration, and usage.
+Visit the [CropXtender Documentation](https://cropxtender.netlify.app/docs.html) for detailed information on installation, configuration, and usage.
 
 ## Features
 
@@ -15,7 +15,7 @@ Visit the [CropXtender Documentation](https://wintxer.github.io/cropXtender-doc/
 
 ## Demo
 
-Explore the [CropXtender Demo](https://wintxer.github.io/cropXtender-doc/editor.html) to see the plugin in action.
+Explore the [CropXtender Demo](https://cropxtender.netlify.app/editor.html) to see the plugin in action.
 
 
 ## Getting Started
